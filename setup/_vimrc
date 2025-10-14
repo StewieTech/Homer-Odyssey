@@ -1,0 +1,58 @@
+" --- Visual mode: persist selection while indenting & move lines (VS Code behavior) ---
+xnoremap < <gv
+xnoremap > >gv
+xnoremap J :m '>+1<CR>gv=gv
+xnoremap K :m '<-2<CR>gv=gv
+
+" ==========================
+"  _vimrc for Errol (Windows)
+"  Location: C:\Users\Errol\_vimrc
+"  Generated from VS Code settings/keybindings
+" ==========================
+
+" --- Basics ---
+set nocompatible
+set encoding=utf-8
+set number
+set relativenumber            " VS Code: editor.lineNumbers=relative
+set hlsearch                  " VS Code: vim.hlsearch=true
+set wrap                      " VS Code: editor.wordWrap=on
+set backspace=indent,eol,start
+set hidden
+set list                      " VS Code: renderWhitespace=all
+set listchars=tab:»·,trail:·,extends:…,precedes:…,nbsp:␣
+set mouse=a
+set ttyfast
+
+" --- Move lines in Normal/Visual with Alt+j / Alt+k ---
+nnoremap <A-j> :m .+1<CR>==
+nnoremap <A-k> :m .-2<CR>==
+xnoremap <A-j> :m '>+1<CR>gv=gv
+xnoremap <A-k> :m '<-2<CR>gv=gv
+
+" --- Quick actions replicated from VS Code ---
+" Paste from system clipboard
+nnoremap <C-p> "+p
+vnoremap <C-p> "+p
+
+
+" Insert/Other modes: jk to escape
+inoremap jk <Esc>
+" nnoremap jk <Esc>
+
+" Use the system clipboard (on gVim/Neovim this uses the Windows clipboard)
+if has('clipboard')
+  set clipboard^=unnamed,unnamedplus
+endif
+
+" --- Window/Buffer navigation (from VS Code Vim keybindings) ---
+nnoremap <C-h> :bprevious<CR>
+nnoremap <C-l> :bnext<CR>
+
+" --- Terminal helpers (approximate VS Code toggles) ---
+" Open a terminal split from current file's directory (Ctrl+Shift+T analogue)
+command! -nargs=0 TermHere split | wincmd j | exec 'lcd %:p:h' | terminal
+nnoremap <C-S-t> :TermHere<CR>
+
+" Toggle bottom panel (approx): open/close quickfix as a stand-in
+nnoremap <C-S-j> :cwindow<CR>
