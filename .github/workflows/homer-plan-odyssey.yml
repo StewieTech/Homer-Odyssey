@@ -1,0 +1,84 @@
+name: Homer - Plan Odyssey
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_repository: { description: "Allowlisted owner/repository", required: true, type: string }
+      target_ref: { description: "Exact target ref", required: true, type: string }
+      profile: { description: "Bundled profile or safe profile path", required: true, type: string }
+      package_filters: { description: "Comma-separated package filters", required: false, default: "", type: string }
+  workflow_call:
+    inputs:
+      target_repository: { required: true, type: string }
+      target_ref: { required: true, type: string }
+      profile: { required: true, type: string }
+      package_filters: { required: false, default: "", type: string }
+    secrets:
+      HOMER_TARGET_TOKEN: { required: false }
+    outputs:
+      response: { description: "Structured Odyssey response", value: "${{ jobs.plan.outputs.response }}" }
+
+permissions:
+  contents: read
+
+concurrency:
+  group: homer-read-${{ inputs.target_repository }}-${{ inputs.profile }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      response: ${{ steps.output.outputs.response }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.target_repository }}
+          ref: ${{ inputs.target_ref }}
+          path: target
+          token: ${{ secrets.HOMER_TARGET_TOKEN || github.token }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with: { node-version: "20", cache: npm }
+      - run: npm ci --ignore-scripts
+      - name: Validate and build request
+        env:
+          HOMER_ALLOWED_TARGETS: ${{ vars.HOMER_ALLOWED_TARGETS }}
+          HOMER_ALLOWED_PROFILES: ${{ vars.HOMER_ALLOWED_PROFILES }}
+          HOMER_ALLOWED_REFS: ${{ vars.HOMER_ALLOWED_REFS }}
+        run: >-
+          node scripts/operation-request.js
+          --operation plan
+          --target-repository "${{ inputs.target_repository }}"
+          --target-ref "${{ inputs.target_ref }}"
+          --profile "${{ inputs.profile }}"
+          --package-filters "${{ inputs.package_filters }}"
+          --update-channel manual
+          --requested-by "github:${{ github.actor }}"
+          --dry-run true
+          --idempotency-key "plan-${{ github.run_id }}-${{ github.run_attempt }}"
+          > odyssey-request.json
+      - run: >-
+          node bin/homer.js run --request odyssey-request.json
+          --source . --target target --profile "${{ inputs.profile }}"
+          > odyssey-response.json
+      - id: output
+        run: |
+          echo 'response<<HOMER_EOF' >> "$GITHUB_OUTPUT"
+          cat odyssey-response.json >> "$GITHUB_OUTPUT"
+          echo 'HOMER_EOF' >> "$GITHUB_OUTPUT"
+      - name: Write durable run summary
+        if: always()
+        shell: bash
+        run: |
+          echo '## Homer Odyssey plan' >> "$GITHUB_STEP_SUMMARY"
+          test -f odyssey-response.json && node -e "const r=require('./odyssey-response.json'); console.log('- Status: '+r.run.status+'\n- Target: '+r.run.target.repository+'@'+r.run.target.ref+'\n- Policy: '+r.policyDecision.verdict)" >> "$GITHUB_STEP_SUMMARY" || echo '- No response artifact was produced.' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: homer-plan-${{ github.run_id }}
+          path: |
+            odyssey-request.json
+            odyssey-response.json
+          retention-days: 14
+          if-no-files-found: error

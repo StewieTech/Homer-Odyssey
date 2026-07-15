@@ -62,7 +62,7 @@ function atomicWrite(filePath, content) {
 function validateAcceptedPlan(planPath, inventory, config) {
   const accepted = assertContract('odyssey-plan', readJson(planPath, 'Odyssey Plan'));
   if (!accepted.accepted) throw new HomerError('homer apply requires an accepted Odyssey Plan', EXIT.PLAN_NOT_ACCEPTED);
-  const current = buildPlan(inventory, config);
+  const current = buildPlan(inventory, config, { packageFilters: accepted.packageFilters || [] });
   if (accepted.planId !== current.planId || accepted.inventoryHash !== current.inventoryHash) {
     throw new HomerError('Accepted Odyssey Plan is stale for the current source, profile, or target inputs', EXIT.PLAN_NOT_ACCEPTED);
   }

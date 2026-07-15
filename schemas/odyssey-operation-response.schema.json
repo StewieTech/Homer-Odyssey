@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/odyssey-operation-response.schema.json",
+  "title": "Homer Odyssey Operation Response v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "run", "packages", "drift", "privilegeDelta", "policyDecision", "artifacts", "nextAllowedActions"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "OdysseyOperationResponse" },
+    "run": { "type": "object" },
+    "packages": { "type": "object" },
+    "drift": { "type": "object", "required": ["status", "summary"], "properties": { "status": { "enum": ["not_checked", "no_drift", "drift_detected", "blocked", "failed"] }, "summary": { "type": "object" }, "reasons": { "type": "array", "items": { "type": "string" }, "uniqueItems": true } } },
+    "privilegeDelta": { "type": "object" },
+    "policyDecision": {
+      "type": "object",
+      "required": ["verdict", "reasons"],
+      "properties": {
+        "verdict": { "enum": ["allowed", "blocked"] },
+        "reasons": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "name"],
+        "properties": {
+          "type": { "type": "string" },
+          "name": { "type": "string" },
+          "content": {}
+        }
+      }
+    },
+    "failureCategory": { "enum": ["authentication", "authorization", "repository_unavailable", "invalid_profile", "dependency_conflict", "protected_file_conflict", "policy_violation", "privilege_increase", "stale_plan", "validation_failure", "workflow_failure", "target_pull_request_conflict", "internal_error"] },
+    "nextAllowedActions": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "exitCode": { "type": "integer" }
+  }
+}

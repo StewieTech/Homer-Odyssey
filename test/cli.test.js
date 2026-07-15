@@ -132,6 +132,30 @@ test('managed target customization returns exit 14 and is preserved', () => {
   assert.ok(plan.preservedPaths.includes('.homer/generated/skills/ralph/SKILL.md'));
 });
 
+test('run accepts a versioned operation request and emits a structured response', () => {
+  const root = copyRunFixture();
+  const requestPath = path.join(root, 'odyssey-request.json');
+  fs.writeFileSync(requestPath, JSON.stringify({
+    apiVersion: 'homer.odyssey/v1',
+    kind: 'OdysseyOperationRequest',
+    operation: 'inspect',
+    targetRepository: 'StewieTech/Fixture',
+    targetRef: 'main',
+    profile: 'studio',
+    updateChannel: 'manual',
+    requestedBy: 'cli-test',
+    dryRun: true,
+    idempotencyKey: 'cli-inspect-fixture',
+    packageFilters: [],
+  }));
+  const result = run(['run', '--request', requestPath, '--config', path.join(root, 'homer.yaml')]);
+  assert.equal(result.status, 0, result.stderr);
+  const response = JSON.parse(result.stdout);
+  assert.equal(response.kind, 'OdysseyOperationResponse');
+  assert.equal(response.run.status, 'inspection_ready');
+  assert.equal(response.run.evidenceReferences[0].type, 'odyssey-inventory');
+});
+
 test('invalid profile returns exit 10 and no artifact', () => {
   const root = copyRunFixture();
   const profilePath = path.join(root, 'profile.json');

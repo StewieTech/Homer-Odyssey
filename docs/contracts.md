@@ -16,3 +16,15 @@ Every contract uses `apiVersion: homer.odyssey/v1`. Schema changes that break co
 ## Path ownership
 
 Profiles declare protected and managed glob patterns. Protected content is always target-owned. A managed-path file is replaceable only when it carries the Homer generated marker and no protected rule matches it. All other target files are preserved. Protected rules win over managed rules.
+
+## Recurring operation contracts
+
+The JSON Schemas under `schemas/` are Homer's public, versioned boundary. Callers must validate inputs and outputs against the exact `apiVersion`; unknown fields fail closed.
+
+Recurring integrations use three related contracts:
+
+- `OdysseyOperationRequest` owns bounded caller intent and idempotency metadata.
+- `OdysseyRun` owns exact inputs, source/target identities, lifecycle transitions, evidence references, and retry state.
+- `OdysseyOperationResponse` owns drift and package summaries, privilege and policy evidence, artifacts, failure taxonomy, and next allowed actions.
+
+The existing inventory, plan, lock, verification, package, profile, and privilege schemas remain the transformation truth. The recurring contracts reference their outputs rather than duplicating their calculations.
