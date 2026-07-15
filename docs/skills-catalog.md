@@ -1,4 +1,4 @@
-# ToolsCLI Skills Catalog
+# Homer Odyssey Skills Catalog
 
 ## Planning and execution
 

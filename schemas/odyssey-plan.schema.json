@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/odyssey-plan.schema.json",
+  "title": "Homer Odyssey Plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "planId", "accepted", "inputs", "profile", "inventoryHash", "changes", "preservedPaths", "conflicts", "dependencyGraph", "privilegeDelta", "summary"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "OdysseyPlan" },
+    "planId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "accepted": { "const": false },
+    "inputs": { "type": "object" },
+    "profile": { "type": "object" },
+    "inventoryHash": { "type": "string" },
+    "changes": { "type": "array", "items": { "type": "object", "required": ["type", "path", "ownership"], "properties": { "type": { "enum": ["addition", "removal", "replacement", "unchanged"] }, "path": { "type": "string" }, "sourcePath": { "type": "string" }, "ownership": { "enum": ["generated", "target-owned"] }, "beforeHash": { "type": ["string", "null"] }, "afterHash": { "type": ["string", "null"] } } } },
+    "preservedPaths": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "conflicts": { "type": "array", "items": { "type": "object", "required": ["type", "path", "message"], "properties": { "type": { "enum": ["protected-path", "customization"] }, "path": { "type": "string" }, "message": { "type": "string" } } } },
+    "dependencyGraph": { "type": "object" },
+    "privilegeDelta": { "type": "object" },
+    "summary": { "type": "object" }
+  }
+}

@@ -1,22 +1,33 @@
-# ToolsCLI Agent Skills
+# Homer Odyssey — Agent Portability Control Plane
 
-[![skills.sh](https://skills.sh/b/StewieTech/ToolsCLI)](https://skills.sh/StewieTech/ToolsCLI)
+[![skills.sh](https://skills.sh/b/StewieTech/Homer-Odyssey)](https://skills.sh/StewieTech/Homer-Odyssey)
 
-Generalized agent skills extracted from the Pariss workflow stack and cleaned up for public reuse.
+Homer Odyssey inventories, plans, and reviews governed character and skill projections across repositories. Its first tracer bullet is deliberately read-only: `homer inspect`, `homer plan`, and `homer diff` describe a Pariss-to-Studio Odyssey Run without writing to the target repository.
+
+The generalized agent skills and the legacy `j2puml` and `rct` utilities remain available in their existing locations.
 
 These skills are meant to be small, composable, and practical. Some are broadly reusable out of the box. Others are intentionally template-like and use placeholders such as `<base-branch>`, `<release-branch>`, `<production-domain>`, and `<frontend-app-dir>` so you can adapt them to your own repo and release flow.
 
 ## Quickstart
 
-1. Run the installer:
+1. Clone and link the CLI with Node.js 20 or newer:
 
 ```bash
-npx skills@latest add StewieTech/ToolsCLI
+git clone https://github.com/StewieTech/Homer-Odyssey.git
+cd Homer-Odyssey
+npm link
+homer --help
 ```
 
-2. Pick the skills you want and the coding agents you want to install them on.
+2. To install the generalized agent-skill catalog, run:
 
-3. If you install planning or issue-tracker skills, also install and run `/setup-agent-skills` once per repo. It configures:
+```bash
+npx skills@latest add StewieTech/Homer-Odyssey
+```
+
+3. Pick the skills you want and the coding agents you want to install them on.
+
+4. If you install planning or issue-tracker skills, also install and run `/setup-agent-skills` once per repo. It configures:
    - your issue tracker
    - your triage label vocabulary
    - your domain-doc layout
@@ -32,6 +43,24 @@ npx skills@latest add StewieTech/ToolsCLI
 - **Utility and integration**: `teach`, `integration-javascript_node`
 
 The full catalog is in [docs/skills-catalog.md](./docs/skills-catalog.md).
+
+## Read-only Odyssey
+
+Use explicit roots:
+
+```bash
+homer inspect --source ../Pariss --target ../MaxCharacterWork --profile studio
+homer plan --source ../Pariss --target ../MaxCharacterWork --profile studio
+homer diff --source ../Pariss --target ../MaxCharacterWork --profile studio
+```
+
+Or copy [`homer.example.yaml`](./homer.example.yaml), update its relative roots, and pass `--config`:
+
+```bash
+homer plan --config ./homer.yaml
+```
+
+All three commands write JSON only to standard output. They never write into the source or target roots. See [CLI behavior](./docs/cli.md), [contract ownership](./docs/contracts.md), and the [old-name compatibility note](./docs/toolscli-compatibility.md).
 
 ## Notes
 

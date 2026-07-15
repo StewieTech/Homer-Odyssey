@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/dependency-graph.schema.json",
+  "title": "Homer Odyssey Dependency Graph v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "nodes", "edges", "missing", "cycles", "conflicts"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "DependencyGraph" },
+    "nodes": { "type": "array", "items": { "type": "object", "required": ["id", "type"], "properties": { "id": { "type": "string" }, "type": { "enum": ["file", "package"] } } } },
+    "edges": { "type": "array", "items": { "type": "object", "required": ["from", "to", "type"], "properties": { "from": { "type": "string" }, "to": { "type": "string" }, "type": { "enum": ["reference", "package"] } } } },
+    "missing": { "type": "array", "items": { "type": "object", "required": ["from", "to", "type"], "properties": { "from": { "type": "string" }, "to": { "type": "string" }, "type": { "enum": ["reference", "package"] } } } },
+    "cycles": { "type": "array", "items": { "type": "array", "items": { "type": "string" } } },
+    "conflicts": { "type": "array", "items": { "type": "object", "required": ["id", "paths"], "properties": { "id": { "type": "string" }, "paths": { "type": "array", "items": { "type": "string" } } } } }
+  }
+}

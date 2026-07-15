@@ -1,0 +1,46 @@
+{
+  "name": "@stewietech/homer-odyssey",
+  "version": "0.1.0",
+  "description": "Homer Odyssey — Agent Portability Control Plane",
+  "license": "MIT",
+  "type": "commonjs",
+  "bin": {
+    "homer": "./bin/homer.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "adapters",
+    "bin",
+    "docs",
+    "evals",
+    "packages",
+    "profiles",
+    "schemas",
+    "src",
+    "transforms"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "test:schema": "node --test test/schema.test.js",
+    "check:references": "node scripts/check-references.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StewieTech/Homer-Odyssey.git"
+  },
+  "bugs": {
+    "url": "https://github.com/StewieTech/Homer-Odyssey/issues"
+  },
+  "homepage": "https://github.com/StewieTech/Homer-Odyssey#readme",
+  "keywords": [
+    "agent-portability",
+    "cli",
+    "codex",
+    "governance"
+  ],
+  "devDependencies": {
+    "ajv": "^8.18.0"
+  }
+}
