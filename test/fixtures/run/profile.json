@@ -4,6 +4,7 @@
   "id": "fixture-studio",
   "version": "1.0.0",
   "displayName": "Fixture Studio",
+  "lockfile": "homer.lock",
   "capabilities": { "allowed": ["filesystem.read"], "denied": ["production.mutate"], "humanGated": ["filesystem.write"] },
   "paths": { "protected": ["AGENTS.md"], "managed": [".homer/generated/**"] },
   "sources": [{ "id": "fixture", "url": "https://example.test/fixture", "role": "incubator" }],

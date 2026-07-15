@@ -1,0 +1,12 @@
+{
+  "apiVersion": "homer.odyssey/v1", "kind": "SkillManifest", "id": "lisa-prime", "version": "1.0.0", "title": "Lisa Prime Evidence Analyst",
+  "corePaths": ["core.md"],
+  "dependencies": { "packages": ["skill:ralph-prime"], "helpers": ["helpers/contract.md"] },
+  "references": ["helpers/contract.md"], "commands": [], "workflows": [], "templates": [],
+  "capabilities": ["filesystem.read", "repository.inspect", "tests.run"],
+  "variables": [{ "name": "ISSUE_TRACKER", "required": true, "description": "Target-owned issue and dedupe surface" }],
+  "outputs": ["reproduction-packet", "lane-recommendation"], "validation": ["package-eval"], "adapters": ["codex"], "evals": ["evals/core.json"],
+  "provenance": { "repository": "https://github.com/StewieTech/Pariss", "commit": "25f7fb367c8bdb375115726968adf1f131f04464", "paths": [".agents/skills/lisa-prime/SKILL.md"] },
+  "compatibility": { "homer": ">=0.2.0", "targets": ["pariss", "restricted", "studio"] },
+  "upgrades": { "from": [], "instructions": "Revalidate reproduction, dedupe, and evidence-lock semantics." }
+}

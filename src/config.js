@@ -19,8 +19,9 @@ function readJson(filePath, label) {
 }
 
 function loadProfile(profileValue, baseDirectory = process.cwd()) {
-  const profilePath = profileValue === 'studio'
-    ? path.join(projectRoot, 'profiles', 'studio.json')
+  const bundledProfile = ['studio', 'restricted', 'pariss'].includes(profileValue);
+  const profilePath = bundledProfile
+    ? path.join(projectRoot, 'profiles', `${profileValue}.json`)
     : path.resolve(baseDirectory, profileValue);
   const profile = assertContract('target-profile', readJson(profilePath, 'target profile'));
 

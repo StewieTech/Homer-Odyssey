@@ -4,6 +4,7 @@ const { EXIT, VERSION } = require('./constants');
 const { resolveRunConfig } = require('./config');
 const { HomerError } = require('./errors');
 const { blockingMissingDependencies, buildInventory, treeFingerprint } = require('./inventory');
+const { applyProjection, rollbackProjection, verifyProjection } = require('./application');
 const { buildDiff, buildPlan } = require('./planning');
 const { stableJson } = require('./stable');
 
@@ -13,9 +14,12 @@ Usage:
   homer inspect --source <path> --target <path> [--profile studio|<path>]
   homer plan    --source <path> --target <path> [--profile studio|<path>]
   homer diff    --source <path> --target <path> [--profile studio|<path>]
-  homer <inspect|plan|diff> --config <homer.yaml> [--profile studio|<path>]
+  homer plan    --config <homer.yaml> --accept > odyssey-plan.json
+  homer apply   --config <homer.yaml> --plan <odyssey-plan.json> [--dry-run]
+  homer verify  --config <homer.yaml>
+  homer rollback --config <homer.yaml> [--dry-run]
 
-Read-only commands emit deterministic JSON on stdout and never write to either repository.
+All commands emit deterministic JSON. Only apply and rollback may write, and only inside profile-managed paths plus the declared lockfile.
 `;
 
 function parseArguments(argv) {
@@ -23,11 +27,17 @@ function parseArguments(argv) {
   if (!args.length || args.includes('--help') || args.includes('-h')) return { help: true };
   if (args.includes('--version') || args.includes('-v')) return { version: true };
   const command = args.shift();
-  if (!['inspect', 'plan', 'diff'].includes(command)) throw new HomerError(`Unknown command: ${command}`, EXIT.USAGE);
+  if (!['inspect', 'plan', 'diff', 'apply', 'verify', 'rollback'].includes(command)) throw new HomerError(`Unknown command: ${command}`, EXIT.USAGE);
   const options = { command };
-  const aliases = { '--source': 'source', '--target': 'target', '--profile': 'profile', '--config': 'config' };
+  const aliases = { '--source': 'source', '--target': 'target', '--profile': 'profile', '--config': 'config', '--plan': 'plan' };
+  const booleans = { '--accept': 'accept', '--dry-run': 'dryRun' };
   while (args.length) {
     const flag = args.shift();
+    if (booleans[flag]) {
+      if (options[booleans[flag]]) throw new HomerError(`Duplicate option: ${flag}`, EXIT.USAGE);
+      options[booleans[flag]] = true;
+      continue;
+    }
     const key = aliases[flag];
     if (!key) throw new HomerError(`Unknown option: ${flag}`, EXIT.USAGE);
     const value = args.shift();
@@ -38,6 +48,9 @@ function parseArguments(argv) {
   if (options.config && (options.source || options.target)) {
     throw new HomerError('--config cannot be combined with --source or --target', EXIT.USAGE);
   }
+  if (options.accept && command !== 'plan') throw new HomerError('--accept is only valid with homer plan', EXIT.USAGE);
+  if (options.dryRun && !['apply', 'rollback'].includes(command)) throw new HomerError('--dry-run is only valid with homer apply or homer rollback', EXIT.USAGE);
+  if (command === 'apply' && !options.plan) throw new HomerError('homer apply requires --plan <odyssey-plan.json>', EXIT.USAGE);
   return options;
 }
 
@@ -59,13 +72,25 @@ function execute(argv) {
   if (options.help) return { code: EXIT.OK, stdout: help };
   if (options.version) return { code: EXIT.OK, stdout: `${VERSION}\n` };
   const config = resolveRunConfig(options);
+  if (options.command === 'apply') {
+    const output = applyProjection(config, options.plan, { dryRun: options.dryRun });
+    return { code: EXIT.OK, stdout: `${stableJson(output, 2)}\n` };
+  }
+  if (options.command === 'rollback') {
+    const output = rollbackProjection(config, { dryRun: options.dryRun });
+    return { code: EXIT.OK, stdout: `${stableJson(output, 2)}\n` };
+  }
+  if (options.command === 'verify') {
+    const verification = verifyProjection(config);
+    return { code: verification.exitCode, stdout: `${stableJson(verification.report, 2)}\n` };
+  }
   const sourceBefore = treeFingerprint(config.sourceRoot);
   const targetBefore = treeFingerprint(config.targetRoot);
   const inventory = buildInventory(config);
   let plan = null;
   let output = inventory;
   if (options.command === 'plan' || options.command === 'diff') {
-    plan = buildPlan(inventory, config);
+    plan = buildPlan(inventory, config, { accepted: options.accept });
     output = options.command === 'diff' ? buildDiff(plan) : plan;
   }
   const sourceAfter = treeFingerprint(config.sourceRoot);

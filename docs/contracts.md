@@ -6,8 +6,10 @@ Homer Odyssey keeps portable identity, target policy, and run evidence as separa
 - `schemas/skill-manifest.schema.json` owns a portable skill's files, dependencies, capabilities, variables, outputs, validation, and upgrade metadata.
 - `schemas/target-profile.schema.json` owns target policy, vocabulary, repository inputs, path ownership, adapters, overlays, validation commands, and package allowlists.
 - `schemas/homer.schema.json` validates a target declaration (`homer.yaml`).
-- `schemas/homer-lock.schema.json` reserves the reproducibility record used by later write/verify slices.
-- Inventory, dependency graph, privilege delta, and Odyssey Plan schemas own read-only evidence.
+- `schemas/package-eval.schema.json` owns portable, package-local evaluation cases.
+- `schemas/homer-lock.schema.json` owns deterministic generated-file, provenance, sanitization, and rollback evidence.
+- `schemas/verification.schema.json` owns verification evidence and verdicts.
+- Inventory, dependency graph, privilege delta, and Odyssey Plan schemas own discovery and approval evidence.
 
 Every contract uses `apiVersion: homer.odyssey/v1`. Schema changes that break consumers require a new API version rather than an in-place reinterpretation.
 

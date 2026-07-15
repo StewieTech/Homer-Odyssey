@@ -1,0 +1,12 @@
+{
+  "apiVersion": "homer.odyssey/v1", "kind": "SkillManifest", "id": "ralph", "version": "1.0.0", "title": "Ralph Bounded Execution",
+  "corePaths": ["core.md"],
+  "dependencies": { "packages": [], "helpers": ["helpers/contract.md"] },
+  "references": ["helpers/contract.md"], "commands": [], "workflows": [], "templates": [],
+  "capabilities": ["filesystem.read", "filesystem.write", "github.write", "tests.run"],
+  "variables": [{ "name": "ACCEPTED_ISSUE", "required": true, "description": "One decision-complete executable scope" }],
+  "outputs": ["reviewable-change", "validation-packet"], "validation": ["package-eval"], "adapters": ["codex"], "evals": ["evals/core.json"],
+  "provenance": { "repository": "https://github.com/StewieTech/Pariss", "commit": "25f7fb367c8bdb375115726968adf1f131f04464", "paths": [".agents/skills/ralph/SKILL.md"] },
+  "compatibility": { "homer": ">=0.2.0", "targets": ["pariss", "studio"] },
+  "upgrades": { "from": [], "instructions": "Confirm branch freshness, validation, and human-gate semantics before upgrading." }
+}

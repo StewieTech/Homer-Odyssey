@@ -2,7 +2,7 @@
 
 [![skills.sh](https://skills.sh/b/StewieTech/Homer-Odyssey)](https://skills.sh/StewieTech/Homer-Odyssey)
 
-Homer Odyssey inventories, plans, and reviews governed character and skill projections across repositories. Its first tracer bullet is deliberately read-only: `homer inspect`, `homer plan`, and `homer diff` describe a Pariss-to-Studio Odyssey Run without writing to the target repository.
+Homer Odyssey inventories, plans, applies, and verifies governed character and skill projections across repositories. Read-only commands describe a Pariss-to-Studio Odyssey Run; the write path requires an explicitly accepted, current plan and is confined to profile-managed paths.
 
 The generalized agent skills and the legacy `j2puml` and `rct` utilities remain available in their existing locations.
 
@@ -44,7 +44,7 @@ npx skills@latest add StewieTech/Homer-Odyssey
 
 The full catalog is in [docs/skills-catalog.md](./docs/skills-catalog.md).
 
-## Read-only Odyssey
+## Odyssey Runs
 
 Use explicit roots:
 
@@ -60,7 +60,16 @@ Or copy [`homer.example.yaml`](./homer.example.yaml), update its relative roots,
 homer plan --config ./homer.yaml
 ```
 
-All three commands write JSON only to standard output. They never write into the source or target roots. See [CLI behavior](./docs/cli.md), [contract ownership](./docs/contracts.md), and the [old-name compatibility note](./docs/toolscli-compatibility.md).
+Accept a reviewed plan, preview it, apply it, and verify the projection:
+
+```bash
+homer plan --config ./homer.yaml --accept > odyssey-plan.json
+homer apply --config ./homer.yaml --plan odyssey-plan.json --dry-run
+homer apply --config ./homer.yaml --plan odyssey-plan.json
+homer verify --config ./homer.yaml
+```
+
+`inspect`, `plan`, and `diff` never write into the source or target roots. `apply` and `rollback` can change only generated paths owned by the selected profile and its lockfile. See [package and projection model](./docs/package-system.md), [CLI behavior](./docs/cli.md), [contract ownership](./docs/contracts.md), and the [old-name compatibility note](./docs/toolscli-compatibility.md).
 
 ## Notes
 

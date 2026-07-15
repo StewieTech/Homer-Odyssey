@@ -1,0 +1,12 @@
+{
+  "apiVersion": "homer.odyssey/v1", "kind": "SkillManifest", "id": "lorie", "version": "1.0.0", "title": "Lorie Governance Review",
+  "corePaths": ["core.md"],
+  "dependencies": { "packages": ["skill:lisa-prime", "skill:ralph-prime"], "helpers": ["helpers/contract.md"] },
+  "references": ["helpers/contract.md"], "commands": [], "workflows": [], "templates": [],
+  "capabilities": ["filesystem.read", "repository.inspect"],
+  "variables": [{ "name": "GOVERNANCE_BOUNDARY", "required": true, "description": "Explicit target-owned gate requiring review" }],
+  "outputs": ["governance-recommendation", "human-decision-packet"], "validation": ["package-eval"], "adapters": ["codex"], "evals": ["evals/core.json"],
+  "provenance": { "repository": "https://github.com/StewieTech/Pariss", "commit": "25f7fb367c8bdb375115726968adf1f131f04464", "paths": [".agents/skills/lorie/SKILL.md"] },
+  "compatibility": { "homer": ">=0.2.0", "targets": ["pariss", "restricted", "studio"] },
+  "upgrades": { "from": [], "instructions": "Review governance boundaries and final human authority before upgrading." }
+}

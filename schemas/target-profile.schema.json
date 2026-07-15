@@ -4,13 +4,14 @@
   "title": "Homer Odyssey Target Profile v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["apiVersion", "kind", "id", "version", "displayName", "capabilities", "paths", "sources", "vocabulary", "validationCommands", "overlays", "packageAllowlist", "projection"],
+  "required": ["apiVersion", "kind", "id", "version", "displayName", "lockfile", "capabilities", "paths", "sources", "vocabulary", "validationCommands", "overlays", "packageAllowlist", "projection"],
   "properties": {
     "apiVersion": { "const": "homer.odyssey/v1" },
     "kind": { "const": "TargetProfile" },
     "id": { "type": "string", "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$" },
     "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?$" },
     "displayName": { "type": "string", "minLength": 1 },
+    "lockfile": { "type": "string", "minLength": 1 },
     "capabilities": {
       "type": "object",
       "additionalProperties": false,

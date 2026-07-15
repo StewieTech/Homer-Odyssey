@@ -1,7 +1,7 @@
 'use strict';
 
 const API_VERSION = 'homer.odyssey/v1';
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
 
 const EXIT = Object.freeze({
   OK: 0,
@@ -11,6 +11,11 @@ const EXIT = Object.freeze({
   PROTECTED_CONFLICT: 12,
   UNSAFE_PRIVILEGE: 13,
   CUSTOMIZATION_CONFLICT: 14,
+  PLAN_NOT_ACCEPTED: 15,
+  SECURITY_POLICY: 16,
+  EVAL_FAILED: 17,
+  DRIFT: 18,
+  ROLLBACK_FAILED: 19,
   INTERNAL: 70,
 });
 
