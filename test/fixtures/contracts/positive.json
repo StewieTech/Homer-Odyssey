@@ -8,12 +8,14 @@
     "role": "Product architect",
     "purpose": "Route product architecture work",
     "traits": ["evidence-first"],
+    "corePaths": ["core.md"],
     "capabilities": ["filesystem.read"],
     "dependencies": { "characters": [], "skills": ["ralph-prime"], "helpers": ["./prompt.md"] },
     "permissions": { "requested": ["filesystem.read"], "prohibited": ["production.mutate"] },
     "context": { "required": ["CONTEXT.md"], "optional": ["docs/adr"] },
     "adapters": ["codex"],
     "evals": ["routing"],
+    "provenance": { "repository": "https://example.test/source", "commit": "abc", "paths": ["characters/marge.md"] },
     "compatibility": { "homer": ">=0.1.0", "targets": ["studio"] }
   },
   "skill-manifest": {
@@ -24,10 +26,18 @@
     "title": "Ralph Prime",
     "corePaths": ["SKILL.md"],
     "dependencies": { "packages": [], "helpers": ["RUBRIC.md"] },
+    "references": ["RUBRIC.md"],
+    "commands": [],
+    "workflows": [],
+    "templates": [],
     "capabilities": ["filesystem.read"],
     "variables": [{ "name": "ISSUE_TRACKER", "required": true, "description": "Tracker kind" }],
     "outputs": ["implementation-plan"],
     "validation": ["node --test"],
+    "adapters": ["codex"],
+    "evals": ["evals/core.json"],
+    "provenance": { "repository": "https://example.test/source", "commit": "abc", "paths": ["skills/ralph-prime.md"] },
+    "compatibility": { "homer": ">=0.2.0", "targets": ["test"] },
     "upgrades": { "from": ["0.9.0"], "instructions": "Review profile vocabulary." }
   },
   "target-profile": {
@@ -36,6 +46,7 @@
     "id": "test",
     "version": "1.0.0",
     "displayName": "Test Studio",
+    "lockfile": "homer.lock",
     "capabilities": { "allowed": ["filesystem.read"], "denied": ["production.mutate"], "humanGated": ["filesystem.write"] },
     "paths": { "protected": ["AGENTS.md"], "managed": [".homer/generated/**"] },
     "sources": [{ "id": "source", "url": "https://example.test/source", "role": "incubator" }],
@@ -55,6 +66,8 @@
   "homer-lock": {
     "apiVersion": "homer.odyssey/v1",
     "kind": "OdysseyLock",
+    "generatedBy": "Homer Odyssey",
+    "planId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     "source": { "commit": "abc", "hash": "source-hash" },
     "target": { "inputCommit": "def", "inputHash": "target-hash" },
     "profile": { "id": "studio", "version": "1.0.0", "hash": "profile-hash" },
@@ -63,9 +76,9 @@
     "packages": [{ "id": "ralph", "version": "1.0.0", "hash": "package-hash" }],
     "removedCapabilities": [],
     "deniedDependencies": [],
-    "generatedFiles": [{ "path": ".homer/generated/ralph.md", "hash": "file-hash" }],
+    "generatedFiles": [{ "path": ".homer/generated/ralph.md", "hash": "file-hash", "sourcePath": "packages/skills/ralph/core.md" }],
     "validation": [{ "name": "schema", "passed": true }],
-    "rollback": { "previousLockHash": "previous", "instructions": "Restore the prior pinned projection." }
+    "rollback": { "previousLockHash": "previous", "previousLockBase64": "", "instructions": "Restore the prior pinned projection.", "files": [] }
   },
   "dependency-graph": {
     "apiVersion": "homer.odyssey/v1",
@@ -115,5 +128,20 @@
     "dependencyGraph": {},
     "privilegeDelta": {},
     "summary": {}
+  },
+  "package-eval": {
+    "apiVersion": "homer.odyssey/v1",
+    "kind": "PackageEval",
+    "name": "portable-core",
+    "assertions": [{ "type": "contains", "value": "portable" }]
+  },
+  "verification": {
+    "apiVersion": "homer.odyssey/v1",
+    "kind": "OdysseyVerification",
+    "verdict": "PASS",
+    "lockHash": "hash",
+    "checks": [{ "name": "schemas", "passed": true, "details": [] }],
+    "drift": [],
+    "privilegeDelta": {}
   }
 }

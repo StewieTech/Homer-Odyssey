@@ -9,7 +9,7 @@
     "apiVersion": { "const": "homer.odyssey/v1" },
     "kind": { "const": "OdysseyPlan" },
     "planId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
-    "accepted": { "const": false },
+    "accepted": { "type": "boolean" },
     "inputs": { "type": "object" },
     "profile": { "type": "object" },
     "inventoryHash": { "type": "string" },

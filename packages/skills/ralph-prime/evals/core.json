@@ -1,0 +1,1 @@
+{ "apiVersion": "homer.odyssey/v1", "kind": "PackageEval", "name": "ralph-prime-portability", "assertions": [{ "type": "contains", "value": "Escalation-first planning" }, { "type": "notContains", "value": "StewieTech/Pariss" }, { "type": "notContains", "value": ".agents/" }] }

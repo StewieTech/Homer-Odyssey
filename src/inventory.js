@@ -98,11 +98,12 @@ function discoverMetadata(root, relativePath, record) {
   if (parsed?.kind === 'SkillManifest') {
     for (const item of parsed.corePaths || []) addReference(item);
     for (const item of parsed.dependencies?.helpers || []) addReference(item);
-    dependencies.push(...(parsed.dependencies?.packages || []));
+    dependencies.push(...(parsed.dependencies?.packages || []).map((item) => item.includes(':') ? item : `skill:${item}`));
     capabilities.push(...(parsed.capabilities || []));
   } else if (parsed?.kind === 'CharacterPassport') {
     for (const item of parsed.dependencies?.helpers || []) addReference(item);
-    dependencies.push(...(parsed.dependencies?.characters || []), ...(parsed.dependencies?.skills || []));
+    dependencies.push(...(parsed.dependencies?.characters || []).map((item) => `character:${item}`));
+    dependencies.push(...(parsed.dependencies?.skills || []).map((item) => `skill:${item}`));
     capabilities.push(...(parsed.capabilities || []), ...(parsed.permissions?.requested || []));
   } else if (path.basename(relativePath) === 'package.json' && parsed) {
     dependencies.push(...Object.keys(parsed.dependencies || {}).map((item) => `npm:${item}`));
@@ -122,8 +123,14 @@ function repositoryRecords(root) {
 }
 
 function packageIdentity(record) {
-  if (record.parsed?.kind === 'SkillManifest' || record.parsed?.kind === 'CharacterPassport') return record.parsed.id;
+  if (record.parsed?.kind === 'SkillManifest') return `skill:${record.parsed.id}`;
+  if (record.parsed?.kind === 'CharacterPassport') return `character:${record.parsed.id}`;
   return null;
+}
+
+function hasGeneratedMarker(record, profile) {
+  if (record.text.startsWith(profile.projection.generatedMarker)) return true;
+  return record.parsed?.generatedBy === 'Homer Odyssey';
 }
 
 function detectCycles(edges) {
@@ -179,7 +186,14 @@ function buildDependencyGraph(allRecords) {
     }
   }
   const conflicts = [...packageLocations.entries()]
-    .filter(([, locations]) => locations.length > 1)
+    .filter(([, locations]) => {
+      const countsByRepository = new Map();
+      for (const location of locations) {
+        const repository = location.slice(0, location.indexOf(':'));
+        countsByRepository.set(repository, (countsByRepository.get(repository) || 0) + 1);
+      }
+      return [...countsByRepository.values()].some((count) => count > 1);
+    })
     .map(([id, paths]) => ({ id, paths: paths.sort() }))
     .sort((left, right) => left.id.localeCompare(right.id));
   const uniqueObjects = (values) => [...new Map(values.map((value) => [JSON.stringify(value), value])).values()]
@@ -206,7 +220,7 @@ function classify(repository, relativePath, record, oppositeByPath, profile) {
   if (repository === 'target') {
     if (matchesAny(relativePath, profile.paths.protected)) statuses.push('protected', 'target-owned');
     else if (matchesAny(relativePath, profile.paths.managed)) {
-      statuses.push(record.text.startsWith(profile.projection.generatedMarker) ? 'managed-generated' : 'managed-customization');
+      statuses.push(hasGeneratedMarker(record, profile) ? 'managed-generated' : 'managed-customization');
     } else statuses.push('target-owned');
   }
   return sortedUnique(statuses);

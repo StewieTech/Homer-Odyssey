@@ -1,0 +1,1 @@
+{ "apiVersion": "homer.odyssey/v1", "kind": "PackageEval", "name": "lisa-prime-portability", "assertions": [{ "type": "contains", "value": "Evidence analysis and shaping" }, { "type": "notContains", "value": "StewieTech/Pariss" }, { "type": "notContains", "value": ".agents/" }] }

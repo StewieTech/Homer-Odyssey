@@ -8,4 +8,6 @@
   "privilege-delta": { "apiVersion": "homer.odyssey/v1", "kind": "PrivilegeDelta", "sourceCapabilities": [], "targetCapabilities": [], "added": [], "removed": [], "allowed": [], "humanGated": [], "denied": [], "unsafeIncrease": "no" },
   "inventory": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyInventory", "inputs": {}, "entries": [{ "repository": "source", "path": "x" }], "dependencyGraph": {}, "summary": {}, "inventoryHash": "x" },
   "odyssey-plan": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyPlan", "planId": "short", "accepted": true, "inputs": {}, "profile": {}, "inventoryHash": "x", "changes": [], "preservedPaths": [], "conflicts": [], "dependencyGraph": {}, "privilegeDelta": {}, "summary": {} }
+  ,"package-eval": { "apiVersion": "homer.odyssey/v1", "kind": "PackageEval", "name": "", "assertions": [] }
+  ,"verification": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyVerification", "verdict": "MAYBE", "lockHash": "x", "checks": [], "drift": [], "privilegeDelta": {} }
 }

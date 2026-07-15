@@ -3,6 +3,7 @@
 const { API_VERSION } = require('./constants');
 const { mapPath, matchesAny } = require('./glob');
 const { assertContract } = require('./schema');
+const { buildProjectedArtifact } = require('./projection');
 const { hashObject, sortedUnique } = require('./stable');
 
 function packageCoordinates(sourcePath) {
@@ -55,14 +56,17 @@ function privilegeDelta(inventory, profile, selectedSourcePaths) {
   });
 }
 
-function buildPlan(inventory, config) {
+function buildPlan(inventory, config, options = {}) {
   const targetByPath = new Map(inventory.entries
     .filter((entry) => entry.repository === 'target')
     .map((entry) => [entry.path, entry]));
-  const sourceCandidates = inventory.entries
+  const allSourceCandidates = inventory.entries
     .filter((entry) => entry.repository === 'source' && entry.statuses.includes('portable-candidate'))
     .map((entry) => ({ entry, targetPath: mappedTargetPath(entry.path, config.profile) }))
-    .filter((item) => item.targetPath)
+    .filter((item) => item.targetPath);
+  const hasCanonicalPackages = allSourceCandidates.some((item) => item.entry.path.startsWith('packages/'));
+  const sourceCandidates = allSourceCandidates
+    .filter((item) => !hasCanonicalPackages || item.entry.path.startsWith('packages/'))
     .sort((left, right) => left.targetPath.localeCompare(right.targetPath));
   const selectedTargets = new Set(sourceCandidates.map((item) => item.targetPath));
   const selectedSources = sourceCandidates.map((item) => item.entry.path);
@@ -73,6 +77,7 @@ function buildPlan(inventory, config) {
   for (const candidate of sourceCandidates) {
     const source = candidate.entry;
     const target = targetByPath.get(candidate.targetPath);
+    const projected = buildProjectedArtifact(config, source.path, candidate.targetPath);
     if (matchesAny(candidate.targetPath, config.profile.paths.protected)) {
       conflicts.push({
         type: 'protected-path',
@@ -92,7 +97,7 @@ function buildPlan(inventory, config) {
       continue;
     }
     if (!target) {
-      changes.push({ type: 'addition', path: candidate.targetPath, sourcePath: source.path, ownership: 'generated', beforeHash: null, afterHash: source.hash });
+      changes.push({ type: 'addition', path: candidate.targetPath, sourcePath: source.path, ownership: 'generated', beforeHash: null, afterHash: projected.hash });
     } else if (target.statuses.includes('managed-customization')) {
       conflicts.push({
         type: 'customization',
@@ -101,14 +106,14 @@ function buildPlan(inventory, config) {
       });
       preserved.add(target.path);
     } else {
-      const semanticUnchanged = target.hash === source.hash;
+      const semanticUnchanged = target.hash === projected.hash;
       changes.push({
         type: semanticUnchanged ? 'unchanged' : 'replacement',
         path: target.path,
         sourcePath: source.path,
         ownership: 'generated',
         beforeHash: target.hash,
-        afterHash: source.hash,
+        afterHash: projected.hash,
       });
     }
   }
@@ -146,7 +151,7 @@ function buildPlan(inventory, config) {
   const planCore = {
     apiVersion: API_VERSION,
     kind: 'OdysseyPlan',
-    accepted: false,
+    accepted: options.accepted === true,
     inputs: inventory.inputs,
     profile: inventory.inputs.profile,
     inventoryHash: inventory.inventoryHash,
@@ -157,7 +162,9 @@ function buildPlan(inventory, config) {
     privilegeDelta: delta,
     summary,
   };
-  const plan = { ...planCore, planId: hashObject(planCore) };
+  const identityCore = { ...planCore };
+  delete identityCore.accepted;
+  const plan = { ...planCore, planId: hashObject(identityCore) };
   return assertContract('odyssey-plan', plan);
 }
 

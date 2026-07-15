@@ -35,6 +35,19 @@ function directoryFingerprint(root) {
   return hashBytes(files.join('\n'));
 }
 
+function copyPortablePackages() {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'homer-portable-cli-'));
+  const source = path.join(root, 'source');
+  const target = path.join(root, 'target');
+  fs.mkdirSync(source, { recursive: true });
+  fs.mkdirSync(target, { recursive: true });
+  fs.cpSync(path.join(projectRoot, 'packages'), path.join(source, 'packages'), { recursive: true });
+  fs.cpSync(path.join(projectRoot, 'profiles'), path.join(source, 'profiles'), { recursive: true });
+  fs.cpSync(path.join(projectRoot, 'adapters'), path.join(source, 'adapters'), { recursive: true });
+  fs.writeFileSync(path.join(target, 'AGENTS.md'), '# Target-owned routing\n');
+  return { root, source, target, profile: path.join(source, 'profiles', 'studio.json') };
+}
+
 test('inspect is deterministic and does not mutate the target', () => {
   const root = copyRunFixture();
   const before = directoryFingerprint(path.join(root, 'target'));
@@ -129,4 +142,38 @@ test('invalid profile returns exit 10 and no artifact', () => {
   assert.equal(result.status, 10);
   assert.equal(result.stdout, '');
   assert.match(result.stderr, /ambiguous policy/i);
+});
+
+test('accepted portable plan supports dry-run, apply, verify, and rollback through the CLI', () => {
+  const state = copyPortablePackages();
+  const common = ['--source', state.source, '--target', state.target, '--profile', state.profile];
+  const planned = run(['plan', ...common, '--accept']);
+  assert.equal(planned.status, 0, planned.stderr);
+  const plan = JSON.parse(planned.stdout);
+  assert.equal(plan.accepted, true);
+  const planPath = path.join(state.root, 'accepted-plan.json');
+  fs.writeFileSync(planPath, planned.stdout);
+
+  const before = directoryFingerprint(state.target);
+  const preview = run(['apply', ...common, '--plan', planPath, '--dry-run']);
+  assert.equal(preview.status, 0, preview.stderr);
+  assert.equal(JSON.parse(preview.stdout).dryRun, true);
+  assert.equal(directoryFingerprint(state.target), before);
+
+  const applied = run(['apply', ...common, '--plan', planPath]);
+  assert.equal(applied.status, 0, applied.stderr);
+  assert.ok(JSON.parse(applied.stdout).writes.length > 20);
+  assert.equal(fs.readFileSync(path.join(state.target, 'AGENTS.md'), 'utf8'), '# Target-owned routing\n');
+
+  const verified = run(['verify', ...common]);
+  assert.equal(verified.status, 0, verified.stderr);
+  assert.equal(JSON.parse(verified.stdout).verdict, 'PASS');
+
+  const rollbackPreview = run(['rollback', ...common, '--dry-run']);
+  assert.equal(rollbackPreview.status, 0, rollbackPreview.stderr);
+  assert.equal(JSON.parse(rollbackPreview.stdout).dryRun, true);
+  const rolledBack = run(['rollback', ...common]);
+  assert.equal(rolledBack.status, 0, rolledBack.stderr);
+  assert.equal(fs.existsSync(path.join(state.target, 'homer.lock')), false);
+  assert.equal(fs.readFileSync(path.join(state.target, 'AGENTS.md'), 'utf8'), '# Target-owned routing\n');
 });

@@ -4,6 +4,7 @@
   "id": "studio",
   "version": "1.0.0",
   "displayName": "MaxCharacterWork Studio",
+  "lockfile": "homer.lock",
   "capabilities": {
     "allowed": [
       "filesystem.read",
@@ -83,13 +84,17 @@
   "packageAllowlist": {
     "characters": [
       "lisa",
-      "marge-product-architect",
+      "lorie",
+      "marge",
+      "ralph",
       "ralph-prime"
     ],
     "skills": [
+      "lisa",
       "lisa-prime",
+      "lorie",
+      "marge-product-architect",
       "ralph",
-      "ralph-fixer",
       "ralph-prime"
     ]
   },
@@ -102,6 +107,14 @@
       },
       {
         "source": ".agents/skills/**",
+        "target": ".homer/generated/skills/**"
+      },
+      {
+        "source": "packages/characters/**",
+        "target": ".homer/generated/characters/**"
+      },
+      {
+        "source": "packages/skills/**",
         "target": ".homer/generated/skills/**"
       }
     ]

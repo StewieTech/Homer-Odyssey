@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/package-eval.schema.json",
+  "title": "Homer Odyssey Package Evaluation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "name", "assertions"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "PackageEval" },
+    "name": { "type": "string", "minLength": 1 },
+    "generatedBy": { "type": "string" },
+    "generatedSource": { "type": "object", "required": ["path", "hash"], "properties": { "path": { "type": "string" }, "hash": { "type": "string" } } },
+    "assertions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "value"],
+        "properties": {
+          "type": { "enum": ["contains", "notContains"] },
+          "value": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}
