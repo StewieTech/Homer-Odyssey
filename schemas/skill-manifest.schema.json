@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/skill-manifest.schema.json",
+  "title": "Homer Odyssey Skill Package Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "id", "version", "title", "corePaths", "dependencies", "capabilities", "variables", "outputs", "validation", "upgrades"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "SkillManifest" },
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?$" },
+    "title": { "type": "string", "minLength": 1 },
+    "corePaths": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packages", "helpers"],
+      "properties": {
+        "packages": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "helpers": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "capabilities": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "variables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "required"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" },
+          "required": { "type": "boolean" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "outputs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "validation": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "upgrades": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "instructions"],
+      "properties": {
+        "from": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "instructions": { "type": "string" }
+      }
+    }
+  }
+}

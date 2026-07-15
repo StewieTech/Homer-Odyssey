@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/inventory.schema.json",
+  "title": "Homer Odyssey Inventory v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "inputs", "entries", "dependencyGraph", "summary", "inventoryHash"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "OdysseyInventory" },
+    "inputs": {
+      "type": "object",
+      "required": ["source", "target", "profile"],
+      "properties": {
+        "source": { "type": "object", "required": ["root", "commit", "hash"], "properties": { "root": { "type": "string" }, "commit": { "type": "string" }, "hash": { "type": "string" } } },
+        "target": { "type": "object", "required": ["root", "commit", "hash"], "properties": { "root": { "type": "string" }, "commit": { "type": "string" }, "hash": { "type": "string" } } },
+        "profile": { "type": "object", "required": ["id", "version", "hash"], "properties": { "id": { "type": "string" }, "version": { "type": "string" }, "hash": { "type": "string" } } }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["repository", "path", "hash", "size", "references", "dependencies", "capabilities", "statuses"],
+        "properties": {
+          "repository": { "enum": ["source", "target"] },
+          "path": { "type": "string" },
+          "hash": { "type": "string" },
+          "size": { "type": "integer" },
+          "references": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+          "dependencies": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+          "capabilities": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+          "statuses": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+        }
+      }
+    },
+    "dependencyGraph": { "type": "object" },
+    "summary": { "type": "object" },
+    "inventoryHash": { "type": "string" }
+  }
+}

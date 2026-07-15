@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/privilege-delta.schema.json",
+  "title": "Homer Odyssey Privilege Delta v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "sourceCapabilities", "targetCapabilities", "added", "removed", "allowed", "humanGated", "denied", "unsafeIncrease"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "PrivilegeDelta" },
+    "sourceCapabilities": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "targetCapabilities": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "added": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "removed": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "allowed": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "humanGated": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "denied": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "unsafeIncrease": { "type": "boolean" }
+  }
+}

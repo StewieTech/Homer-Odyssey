@@ -1,0 +1,5 @@
+apiVersion: homer.odyssey/v1
+kind: OdysseyTarget
+sourceRoot: ../Pariss
+targetRoot: ../MaxCharacterWork
+profile: studio
