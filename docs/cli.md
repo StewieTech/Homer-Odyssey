@@ -1,6 +1,6 @@
 # CLI
 
-`homer inspect`, `homer plan`, `homer diff`, `homer apply`, `homer verify`, and `homer rollback` accept `--source`, `--target`, and `--profile`, or `--config <homer.yaml>`. Bundled profiles are `studio`, `restricted`, and `pariss`. Output is stable, pretty-printed JSON on standard output; diagnostics use standard error.
+`homer inspect`, `homer plan`, `homer diff`, `homer apply`, `homer verify`, `homer rollback`, and `homer run` accept `--source`, `--target`, and `--profile`, or `--config <homer.yaml>`. `run` additionally requires `--request <odyssey-operation-request.json>`. Bundled profiles are `studio`, `restricted`, and `pariss`. Output is stable, pretty-printed JSON on standard output; diagnostics use standard error.
 
 The read-only commands never create, update, or delete files under the source or target root. Apply requires a current plan emitted with `homer plan --accept`; `--dry-run` previews its exact write set. Apply writes only profile-managed paths and the profile's declared lockfile. Rollback reads the lockfile backup packet and restores only previously managed content.
 
@@ -27,3 +27,7 @@ An accepted plan is not a blanket authorization. At apply time Homer rebuilds th
 | 70 | Unexpected internal failure or read-only invariant violation |
 
 Profile validation and policy failures are fail-closed. `diff` returns the same policy exit as `plan` because it is a view of that plan, not a bypass.
+
+`run` maps the compatibility commands into a structured `OdysseyOperationResponse`. Read-only operations fingerprint both roots before and after execution. Mutating operations require a fresh accepted plan and an exclusive repository/profile lease. Programmatic branch and pull-request operations use an injected repository adapter; the local CLI therefore fails closed if no authorized adapter is present.
+
+`plan` and `diff` accept `--package-filters <id,...>`. Filters are retained in plan identity as trigger scope; Homer still resolves and validates the complete dependency-closed profile projection.

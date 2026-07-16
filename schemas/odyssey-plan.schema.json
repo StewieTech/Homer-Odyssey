@@ -12,6 +12,8 @@
     "accepted": { "type": "boolean" },
     "inputs": { "type": "object" },
     "profile": { "type": "object" },
+    "packageFilters": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "targetDeclarationHash": { "type": "string" },
     "inventoryHash": { "type": "string" },
     "changes": { "type": "array", "items": { "type": "object", "required": ["type", "path", "ownership"], "properties": { "type": { "enum": ["addition", "removal", "replacement", "unchanged"] }, "path": { "type": "string" }, "sourcePath": { "type": "string" }, "ownership": { "enum": ["generated", "target-owned"] }, "beforeHash": { "type": ["string", "null"] }, "afterHash": { "type": ["string", "null"] } } } },
     "preservedPaths": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },

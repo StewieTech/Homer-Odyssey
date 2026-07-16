@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/odyssey-run.schema.json",
+  "title": "Homer Odyssey Run v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "runId", "status", "operation", "exactInputs", "source", "target", "profile", "transitionHistory", "evidenceReferences", "retry"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "OdysseyRun" },
+    "runId": { "type": "string", "pattern": "^[a-f0-9]{24}$" },
+    "status": { "enum": ["requested", "resolving_target", "inspecting", "drift_detected", "no_drift", "planning", "plan_ready", "awaiting_approval", "applying", "validating", "pr_created", "blocked", "failed", "cancelled", "rolled_back", "inspection_ready", "branch_created", "applied", "verified", "rollback_ready"] },
+    "operation": { "type": "string" },
+    "exactInputs": { "type": "object" },
+    "source": { "type": "object" },
+    "target": { "type": "object" },
+    "profile": { "type": "object" },
+    "transitionHistory": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "sequence"],
+        "properties": {
+          "from": { "type": ["string", "null"] },
+          "to": { "type": "string" },
+          "sequence": { "type": "integer" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "evidenceReferences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "name"],
+        "properties": {
+          "type": { "type": "string" },
+          "name": { "type": "string" }
+        }
+      }
+    },
+    "retry": { "type": "object", "required": ["attempt", "replayed"], "properties": { "attempt": { "type": "integer" }, "replayed": { "type": "boolean" } } }
+  }
+}

@@ -6,20 +6,22 @@ const { HomerError } = require('./errors');
 const { blockingMissingDependencies, buildInventory, treeFingerprint } = require('./inventory');
 const { applyProjection, rollbackProjection, verifyProjection } = require('./application');
 const { buildDiff, buildPlan } = require('./planning');
+const { executeOperation, readOperationRequest } = require('./odyssey-run');
 const { stableJson } = require('./stable');
 
 const help = `Homer Odyssey — Agent Portability Control Plane
 
 Usage:
   homer inspect --source <path> --target <path> [--profile studio|<path>]
-  homer plan    --source <path> --target <path> [--profile studio|<path>]
-  homer diff    --source <path> --target <path> [--profile studio|<path>]
+  homer plan    --source <path> --target <path> [--profile studio|<path>] [--package-filters <id,...>]
+  homer diff    --source <path> --target <path> [--profile studio|<path>] [--package-filters <id,...>]
   homer plan    --config <homer.yaml> --accept > odyssey-plan.json
   homer apply   --config <homer.yaml> --plan <odyssey-plan.json> [--dry-run]
   homer verify  --config <homer.yaml>
   homer rollback --config <homer.yaml> [--dry-run]
+  homer run --request <odyssey-operation-request.json> --config <homer.yaml>
 
-All commands emit deterministic JSON. Only apply and rollback may write, and only inside profile-managed paths plus the declared lockfile.
+All commands emit deterministic JSON. Writes require an accepted current plan and remain confined to profile-managed paths plus the declared lockfile; branch and pull-request operations additionally require an authorized repository adapter.
 `;
 
 function parseArguments(argv) {
@@ -27,9 +29,9 @@ function parseArguments(argv) {
   if (!args.length || args.includes('--help') || args.includes('-h')) return { help: true };
   if (args.includes('--version') || args.includes('-v')) return { version: true };
   const command = args.shift();
-  if (!['inspect', 'plan', 'diff', 'apply', 'verify', 'rollback'].includes(command)) throw new HomerError(`Unknown command: ${command}`, EXIT.USAGE);
+  if (!['inspect', 'plan', 'diff', 'apply', 'verify', 'rollback', 'run'].includes(command)) throw new HomerError(`Unknown command: ${command}`, EXIT.USAGE);
   const options = { command };
-  const aliases = { '--source': 'source', '--target': 'target', '--profile': 'profile', '--config': 'config', '--plan': 'plan' };
+  const aliases = { '--source': 'source', '--target': 'target', '--profile': 'profile', '--config': 'config', '--plan': 'plan', '--request': 'request', '--package-filters': 'packageFilters' };
   const booleans = { '--accept': 'accept', '--dry-run': 'dryRun' };
   while (args.length) {
     const flag = args.shift();
@@ -51,6 +53,8 @@ function parseArguments(argv) {
   if (options.accept && command !== 'plan') throw new HomerError('--accept is only valid with homer plan', EXIT.USAGE);
   if (options.dryRun && !['apply', 'rollback'].includes(command)) throw new HomerError('--dry-run is only valid with homer apply or homer rollback', EXIT.USAGE);
   if (command === 'apply' && !options.plan) throw new HomerError('homer apply requires --plan <odyssey-plan.json>', EXIT.USAGE);
+  if (command === 'run' && !options.request) throw new HomerError('homer run requires --request <odyssey-operation-request.json>', EXIT.USAGE);
+  if (options.packageFilters && !['plan', 'diff'].includes(command)) throw new HomerError('--package-filters is only valid with homer plan or homer diff', EXIT.USAGE);
   return options;
 }
 
@@ -72,6 +76,10 @@ function execute(argv) {
   if (options.help) return { code: EXIT.OK, stdout: help };
   if (options.version) return { code: EXIT.OK, stdout: `${VERSION}\n` };
   const config = resolveRunConfig(options);
+  if (options.command === 'run') {
+    const output = executeOperation(readOperationRequest(options.request), config);
+    return { code: output.exitCode, stdout: `${stableJson(output, 2)}\n` };
+  }
   if (options.command === 'apply') {
     const output = applyProjection(config, options.plan, { dryRun: options.dryRun });
     return { code: EXIT.OK, stdout: `${stableJson(output, 2)}\n` };
@@ -90,7 +98,8 @@ function execute(argv) {
   let plan = null;
   let output = inventory;
   if (options.command === 'plan' || options.command === 'diff') {
-    plan = buildPlan(inventory, config, { accepted: options.accept });
+    const packageFilters = (options.packageFilters || '').split(',').map((item) => item.trim()).filter(Boolean);
+    plan = buildPlan(inventory, config, { accepted: options.accept, packageFilters });
     output = options.command === 'diff' ? buildDiff(plan) : plan;
   }
   const sourceAfter = treeFingerprint(config.sourceRoot);

@@ -71,6 +71,14 @@ homer verify --config ./homer.yaml
 
 `inspect`, `plan`, and `diff` never write into the source or target roots. `apply` and `rollback` can change only generated paths owned by the selected profile and its lockfile. See [package and projection model](./docs/package-system.md), [CLI behavior](./docs/cli.md), [contract ownership](./docs/contracts.md), and the [old-name compatibility note](./docs/toolscli-compatibility.md).
 
+Recurring callers use the same engine through a versioned operation envelope:
+
+```bash
+homer run --request odyssey-operation-request.json --config ./homer.yaml
+```
+
+The request supports `inspect`, `check-drift`, `plan`, `create-update-branch`, `apply-plan`, `verify`, `open-pr`, and `rollback-plan`. Repository mutations require a fresh accepted plan and a target/profile lease. Homer exposes draft-pull-request orchestration but intentionally exposes no merge operation. See [recurring operations and workflows](./docs/recurring-operations.md).
+
 ## Notes
 
 - `afk-architecture-issue-factory` is a legacy compatibility alias for `architecture-issue-factory`.

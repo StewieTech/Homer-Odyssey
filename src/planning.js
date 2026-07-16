@@ -57,6 +57,7 @@ function privilegeDelta(inventory, profile, selectedSourcePaths) {
 }
 
 function buildPlan(inventory, config, options = {}) {
+  const packageFilters = sortedUnique(options.packageFilters || []);
   const targetByPath = new Map(inventory.entries
     .filter((entry) => entry.repository === 'target')
     .map((entry) => [entry.path, entry]));
@@ -154,6 +155,8 @@ function buildPlan(inventory, config, options = {}) {
     accepted: options.accepted === true,
     inputs: inventory.inputs,
     profile: inventory.inputs.profile,
+    packageFilters,
+    targetDeclarationHash: hashObject(config.declaration || {}),
     inventoryHash: inventory.inventoryHash,
     changes,
     preservedPaths: [...preserved].sort(),

@@ -143,5 +143,44 @@
     "checks": [{ "name": "schemas", "passed": true, "details": [] }],
     "drift": [],
     "privilegeDelta": {}
+  },
+  "odyssey-operation-request": {
+    "apiVersion": "homer.odyssey/v1",
+    "kind": "OdysseyOperationRequest",
+    "operation": "check-drift",
+    "targetRepository": "StewieTech/Pariss",
+    "targetRef": "developSIT",
+    "profile": "pariss",
+    "updateChannel": "manual",
+    "requestedBy": "fixture",
+    "dryRun": true,
+    "idempotencyKey": "fixture-check-1",
+    "packageFilters": []
+  },
+  "odyssey-run": {
+    "apiVersion": "homer.odyssey/v1",
+    "kind": "OdysseyRun",
+    "runId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+    "status": "requested",
+    "operation": "check-drift",
+    "exactInputs": {},
+    "source": { "commit": "abc" },
+    "target": { "commit": "def" },
+    "profile": { "id": "pariss" },
+    "transitionHistory": [{ "from": null, "to": "requested", "sequence": 0 }],
+    "evidenceReferences": [],
+    "retry": { "attempt": 1, "replayed": false }
+  },
+  "odyssey-operation-response": {
+    "apiVersion": "homer.odyssey/v1",
+    "kind": "OdysseyOperationResponse",
+    "run": {},
+    "packages": {},
+    "drift": { "status": "no_drift", "summary": {}, "reasons": [] },
+    "privilegeDelta": {},
+    "policyDecision": { "verdict": "allowed", "reasons": [] },
+    "artifacts": [{ "type": "odyssey-diff", "name": "odyssey-diff.json", "content": {} }],
+    "nextAllowedActions": [],
+    "exitCode": 0
   }
 }

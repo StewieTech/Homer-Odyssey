@@ -10,4 +10,7 @@
   "odyssey-plan": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyPlan", "planId": "short", "accepted": true, "inputs": {}, "profile": {}, "inventoryHash": "x", "changes": [], "preservedPaths": [], "conflicts": [], "dependencyGraph": {}, "privilegeDelta": {}, "summary": {} }
   ,"package-eval": { "apiVersion": "homer.odyssey/v1", "kind": "PackageEval", "name": "", "assertions": [] }
   ,"verification": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyVerification", "verdict": "MAYBE", "lockHash": "x", "checks": [], "drift": [], "privilegeDelta": {} }
+  ,"odyssey-operation-request": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyOperationRequest", "operation": "merge", "targetRepository": "not-a-repo" }
+  ,"odyssey-run": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyRun", "runId": "short", "status": "complete" }
+  ,"odyssey-operation-response": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyOperationResponse", "run": {}, "packages": {}, "drift": { "status": "unknown", "summary": {} }, "privilegeDelta": {}, "policyDecision": { "verdict": "maybe", "reasons": [] }, "artifacts": [], "nextAllowedActions": [] }
 }
