@@ -1,5 +1,24 @@
 # Homer Odyssey Skills Catalog
 
+## Canonical character workflows
+
+These six entries are rendered from canonical packages and verified by package/version/hash parity. Do not edit their `.agents/skills/**` files by hand; update the package or generic overlay and run `homer catalog render`.
+
+- `lisa`: Evidence-running QA with strict actor/evaluator separation.
+- `lisa-prime`: Reproduction, evidence-lock diagnosis, dedupe, and issue shaping.
+- `marge-product-architect`: Goal-harness product architecture and execution routing.
+- `ralph`: One-issue, one-branch, one-pull-request bounded implementation.
+- `ralph-prime`: Ambiguity, novelty, and risk escalation before execution.
+- `lorie`: Launch-governance review and protected human decision boundaries.
+
+They can be installed generically with:
+
+```bash
+npx skills@latest add StewieTech/Homer-Odyssey
+```
+
+The generated files contain neutral Homer package coordinates, not Pariss or Max authority. `.homer-catalog.json` records the complete dependency closure, package versions and hashes, adapter/template hashes, and rendered source hash. CI runs `homer catalog verify` so relevant package drift cannot be merged without regeneration.
+
 ## Planning and execution
 
 - `implement-change`: Execute a scoped backlog item while preserving repo conventions and validation discipline.
@@ -42,6 +61,8 @@
 - `ralph-prime`: Escalation-first planning and lane routing.
 - `ralph-fixer`: Repair the current PR when validation or merge mechanics fail.
 - `ralph-sequential-merge`: Run one-issue-at-a-time Ralph execution on an explicit issue list.
+
+The package-backed `ralph` and `ralph-prime` entries above are the canonical generated versions. Related fixer/sequential skills remain independently generalized catalog entries.
 
 ## Utility and integration
 

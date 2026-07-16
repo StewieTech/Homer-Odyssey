@@ -1,0 +1,36 @@
+{
+  "apiVersion": "homer.odyssey/v1",
+  "generatedBy": "Homer Odyssey generic Codex catalog renderer",
+  "inputs": [
+    {
+      "hash": "93649791052bc50326a8b22c81e9cbfacd5449a24c99664af73f1a87f32bb0f1",
+      "path": "adapters/codex-catalog.js"
+    },
+    {
+      "hash": "9ae569c3e0f6f6d01552d29a1416732b03a3a68aebcbf7d36b7d188983f13819",
+      "path": "profiles/overlays/generic/catalog.json#ralph"
+    },
+    {
+      "hash": "a6e80f0d90943c7a5e19cb13b19af92026f32b8f14332727b6be535b7f569ec8",
+      "path": "adapters/templates/generic-codex-skill.md"
+    }
+  ],
+  "kind": "GenericCodexSkillOwnership",
+  "nativeName": "ralph",
+  "ownership": "homer-generic-catalog",
+  "packages": [
+    {
+      "hash": "e1ba5c54609612514d598462893f518973f3bf22c5a8d50134ec261733b8fb39",
+      "key": "character:ralph",
+      "path": "packages/characters/ralph/passport.json",
+      "version": "1.1.0"
+    },
+    {
+      "hash": "3abcfa4fba15a1e17cc04513bc4af54ebd38b9cc9b29d2d95dfef3cd0ffc904f",
+      "key": "skill:ralph",
+      "path": "packages/skills/ralph/manifest.json",
+      "version": "1.1.0"
+    }
+  ],
+  "sourceHash": "461d037118d83c8a2504399fbb92c4bf756651c544cbae0bbe1a4fb81d0258c6"
+}

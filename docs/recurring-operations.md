@@ -41,3 +41,11 @@ The read workflows use read permissions and upload the request and response as s
 Package filters are validated, retained in plan identity, and used as auditable trigger scope. The resulting plan still resolves the profile's complete dependency-closed projection; a filter can narrow why a run starts, but cannot bypass required packages or policy checks.
 
 The workflows are disconnected by default: an operator must configure the allowlist and an appropriately scoped target token before enabling writes. Scheduled and dependency-event triggers are intentionally deferred until the reusable manual contract has proven stable.
+
+## Recurring promotion and installation
+
+Recurring source checks should run `homer promote inspect` or `homer promote verify` against a fetched Pariss checkout. Drift creates a promotion plan artifact; it does not automatically accept or apply it. A human reviews classification, proposed destinations, variables, capability changes, evaluation changes, and rejections before producing the accepted plan used by apply.
+
+Generic catalog maintenance runs `homer catalog verify` in CI. A package/version/hash change without regenerated package-backed skills fails the workflow.
+
+Target-aware refreshes run `homer install --dry-run` first and archive its exact write set, then run install and `--verify`. The target profile and required overlay hashes are read every time. Identical refreshes are no-ops. Any unmanaged native-skill conflict, placeholder, source-specific leak, denied capability, package floor failure, or generated drift is a terminal human-review state. Automation must not rewrite the target profile, ADR, local skills, or protected content to resolve those failures.

@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/sanitization-report.schema.json",
+  "title": "Homer target sanitization report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "policy", "canonicalSource", "packages", "overlays", "transformations", "generalized", "replaced", "removed", "humanGated", "denied", "validationCommands", "localPrecedence"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "SanitizationReport" },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "profileHash", "targetRepository", "targetBaseBranch"],
+      "properties": {
+        "version": { "type": "string", "minLength": 1 },
+        "profileHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "targetRepository": { "type": "string", "minLength": 1 },
+        "targetBaseBranch": { "type": "string", "minLength": 1 }
+      }
+    },
+    "canonicalSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "version"],
+      "properties": {
+        "repository": { "const": "https://github.com/StewieTech/Homer-Odyssey" },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "version", "hash"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "version": { "type": "string", "minLength": 1 },
+          "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    },
+    "overlays": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scope", "path", "hash"],
+        "properties": {
+          "package": { "type": "string", "minLength": 1 },
+          "scope": { "enum": ["bundled", "target"] },
+          "path": { "type": "string", "minLength": 1 },
+          "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    },
+    "transformations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "surface", "afterHash"],
+        "properties": {
+          "type": { "type": "string", "minLength": 1 },
+          "surface": { "type": "string", "minLength": 1 },
+          "count": { "type": "integer" },
+          "beforeHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "afterHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "fromHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "toHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "package": { "type": "string", "minLength": 1 },
+          "character": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "generalized": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "surface", "count", "beforeHash", "afterHash", "fromHash", "toHash"],
+        "properties": {
+          "type": { "type": "string", "minLength": 1 },
+          "surface": { "type": "string", "minLength": 1 },
+          "count": { "type": "integer" },
+          "beforeHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "afterHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "fromHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "toHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    },
+    "replaced": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "surface", "count", "beforeHash", "afterHash", "fromHash", "toHash"],
+        "properties": {
+          "type": { "type": "string", "minLength": 1 },
+          "surface": { "type": "string", "minLength": 1 },
+          "count": { "type": "integer" },
+          "beforeHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "afterHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "fromHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "toHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    },
+    "removed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["package", "capability", "reason"],
+        "properties": {
+          "package": { "type": "string", "minLength": 1 },
+          "capability": { "type": "string", "minLength": 1 },
+          "reason": { "const": "human-gated-authority-not-granted" }
+        }
+      }
+    },
+    "humanGated": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["package", "capability"],
+        "properties": {
+          "package": { "type": "string", "minLength": 1 },
+          "capability": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "denied": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "type": { "type": "string", "minLength": 1 },
+          "surface": { "type": "string", "minLength": 1 },
+          "rule": { "type": "string", "minLength": 1 },
+          "ruleHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "tokenHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "package": { "type": "string", "minLength": 1 },
+          "capability": { "type": "string", "minLength": 1 },
+          "reason": { "enum": ["denied", "undeclared"] }
+        }
+      }
+    },
+    "validationCommands": { "type": "array", "items": { "type": "string" } },
+    "localPrecedence": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -4,7 +4,7 @@
   "title": "Homer Odyssey Target Profile v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["apiVersion", "kind", "id", "version", "displayName", "lockfile", "capabilities", "paths", "sources", "vocabulary", "validationCommands", "overlays", "packageAllowlist", "projection"],
+  "required": ["apiVersion", "kind", "id", "version", "displayName", "lockfile", "capabilities", "paths", "sources", "vocabulary", "validationCommands", "overlays", "packageAllowlist", "projection", "sanitization"],
   "properties": {
     "apiVersion": { "const": "homer.odyssey/v1" },
     "kind": { "const": "TargetProfile" },
@@ -76,6 +76,55 @@
             }
           }
         }
+      }
+    },
+    "sanitization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "targetRepository", "targetBaseBranch", "allowedCharacterPackages", "allowedSkillPackages", "nativeSkillNames", "targetVocabulary", "requiredSourceDocs", "validationCommands", "substitutions", "capabilities", "deniedPatterns", "protectedPaths", "managedNativeSkillPaths", "localPrecedence", "requiredOverlays", "minimumPackageVersions", "failOnUnresolvedPlaceholder", "failOnSourceSpecificLeakage", "failOnUnmanagedConflict", "evidenceOutputPath"],
+      "properties": {
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?$" },
+        "targetRepository": { "type": "string", "minLength": 1 },
+        "targetBaseBranch": { "type": "string", "minLength": 1 },
+        "allowedCharacterPackages": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$" }, "uniqueItems": true },
+        "allowedSkillPackages": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$" }, "uniqueItems": true },
+        "nativeSkillNames": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$" }
+        },
+        "targetVocabulary": { "type": "object", "additionalProperties": { "type": "string" } },
+        "requiredSourceDocs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "validationCommands": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "substitutions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["paths", "repositories", "branches"],
+          "properties": {
+            "paths": { "type": "object", "additionalProperties": { "type": "string" } },
+            "repositories": { "type": "object", "additionalProperties": { "type": "string" } },
+            "branches": { "type": "object", "additionalProperties": { "type": "string" } }
+          }
+        },
+        "capabilities": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["allowed", "humanGated", "denied"],
+          "properties": {
+            "allowed": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+            "humanGated": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+            "denied": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+          }
+        },
+        "deniedPatterns": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "protectedPaths": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "managedNativeSkillPaths": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "localPrecedence": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "requiredOverlays": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "minimumPackageVersions": { "type": "object", "additionalProperties": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?$" } },
+        "failOnUnresolvedPlaceholder": { "type": "boolean" },
+        "failOnSourceSpecificLeakage": { "type": "boolean" },
+        "failOnUnmanagedConflict": { "type": "boolean" },
+        "evidenceOutputPath": { "type": "string", "minLength": 1 }
       }
     }
   }

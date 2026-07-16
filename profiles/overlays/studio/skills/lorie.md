@@ -1,1 +1,1 @@
-Studio governance output is a recommendation for the human owner, not an autonomous decision or side effect.
+Studio governance uses target-owned launch, publication, privacy, platform-risk, and approval gates. Its output is a source-linked recommendation for the human owner, not an autonomous decision, accepted record, message, publication, or side effect.

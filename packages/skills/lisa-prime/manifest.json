@@ -1,12 +1,42 @@
 {
-  "apiVersion": "homer.odyssey/v1", "kind": "SkillManifest", "id": "lisa-prime", "version": "1.0.0", "title": "Lisa Prime Evidence Analyst",
+  "apiVersion": "homer.odyssey/v1",
+  "kind": "SkillManifest",
+  "id": "lisa-prime",
+  "version": "1.1.0",
+  "title": "Lisa Prime Evidence Analyst",
   "corePaths": ["core.md"],
-  "dependencies": { "packages": ["skill:ralph-prime"], "helpers": ["helpers/contract.md"] },
-  "references": ["helpers/contract.md"], "commands": [], "workflows": [], "templates": [],
+  "dependencies": {
+    "packages": ["skill:ralph-prime"],
+    "helpers": ["helpers/contract.md", "helpers/evidence-lock.md", "helpers/issue-shaping.md"]
+  },
+  "references": ["helpers/contract.md", "helpers/evidence-lock.md", "helpers/issue-shaping.md"],
+  "commands": [],
+  "workflows": [],
+  "templates": [],
   "capabilities": ["filesystem.read", "repository.inspect", "tests.run"],
-  "variables": [{ "name": "ISSUE_TRACKER", "required": true, "description": "Target-owned issue and dedupe surface" }],
-  "outputs": ["reproduction-packet", "lane-recommendation"], "validation": ["package-eval"], "adapters": ["codex"], "evals": ["evals/core.json"],
-  "provenance": { "repository": "https://github.com/StewieTech/Pariss", "commit": "25f7fb367c8bdb375115726968adf1f131f04464", "paths": [".agents/skills/lisa-prime/SKILL.md"] },
-  "compatibility": { "homer": ">=0.2.0", "targets": ["pariss", "restricted", "studio"] },
-  "upgrades": { "from": [], "instructions": "Revalidate reproduction, dedupe, and evidence-lock semantics." }
+  "variables": [
+    { "name": "ISSUE_TRACKER", "required": true, "description": "Target-owned issue and dedupe surface" },
+    { "name": "EVIDENCE_POLICY", "required": true, "description": "Target-owned evidence retention and privacy contract" }
+  ],
+  "outputs": ["reproduction-packet", "evidence-lock-packet", "lane-recommendation"],
+  "validation": ["package-eval", "target-dedupe-check"],
+  "adapters": ["codex"],
+  "evals": ["evals/core.json"],
+  "provenance": {
+    "repository": "https://github.com/StewieTech/Pariss",
+    "commit": "3585f89a16181161c1964f6174d94e57d021a268",
+    "paths": [
+      ".agents/skills/lisa-prime/SKILL.md",
+      ".agents/skills/lisa-prime/DIAGNOSE-AND-ZOOM-OUT.md",
+      ".agents/skills/lisa-prime/EVIDENCE-LOCK.md",
+      ".agents/skills/lisa-prime/ISSUE-SHAPING.md",
+      ".agents/skills/lisa-prime/PROMOTION-PACKET.md",
+      ".agents/skills/lisa-prime/RUBRIC.md"
+    ]
+  },
+  "compatibility": { "homer": ">=0.3.0", "targets": ["pariss", "restricted", "studio"] },
+  "upgrades": {
+    "from": ["1.0.0"],
+    "instructions": "Revalidate deterministic reproduction, dedupe, evidence-lock hard stops, and lane routing."
+  }
 }

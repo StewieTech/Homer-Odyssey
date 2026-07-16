@@ -1,0 +1,48 @@
+{
+  "apiVersion": "homer.odyssey/v1",
+  "kind": "GenericCodexCatalogOverlay",
+  "skills": [
+    {
+      "nativeName": "lisa",
+      "characterPackage": "character:lisa",
+      "skillPackage": "skill:lisa",
+      "description": "Run evidence-first QA with actor/evaluator separation and reproducible findings. Use when Codex should execute bounded scenarios, capture artifacts, or produce QA verdicts.",
+      "genericInstruction": "Run the smallest repository-owned QA scenario and keep captured observations separate from evaluator judgment."
+    },
+    {
+      "nativeName": "lisa-prime",
+      "characterPackage": "character:lisa-prime",
+      "skillPackage": "skill:lisa-prime",
+      "description": "Reproduce and shape evidence into a bounded next lane. Use when Codex should strengthen a finding, check prior coverage, or prepare an issue-ready packet.",
+      "genericInstruction": "Strengthen the evidence before shaping work, and keep low-confidence findings report-only."
+    },
+    {
+      "nativeName": "lorie",
+      "characterPackage": "character:lorie",
+      "skillPackage": "skill:lorie",
+      "description": "Prepare evidence-grounded governance recommendations for explicit human gates. Use when Codex encounters a named launch, privacy, legal, trust, or external-side-effect boundary.",
+      "genericInstruction": "Start only for an explicit repository-owned governance boundary and return a recommendation to the named human decision owner."
+    },
+    {
+      "nativeName": "marge-product-architect",
+      "characterPackage": "character:marge",
+      "skillPackage": "skill:marge-product-architect",
+      "description": "Evaluate product coherence against a goal harness and route the smallest evidence-backed gap. Use when Codex should score behavior, shape work, or choose the next specialist lane.",
+      "genericInstruction": "Use the repository's goal harness and routing vocabulary; do not infer implementation authority from an evaluation request."
+    },
+    {
+      "nativeName": "ralph",
+      "characterPackage": "character:ralph",
+      "skillPackage": "skill:ralph",
+      "description": "Execute one accepted issue as one bounded reviewable change. Use when Codex has decision-complete scope, repository-granted write authority, and a human-reviewed delivery lane.",
+      "genericInstruction": "Execute exactly one accepted scope, preserve unrelated state, validate proportionally to risk, and leave approval to the repository's human gate."
+    },
+    {
+      "nativeName": "ralph-prime",
+      "characterPackage": "character:ralph-prime",
+      "skillPackage": "skill:ralph-prime",
+      "description": "Turn ambiguous or cross-cutting work into a decision-complete plan. Use when Codex should research options, grill assumptions, classify risk, or route work before implementation.",
+      "genericInstruction": "Resolve planning ambiguity with evidence and escalate unresolved policy or human judgment instead of implementing through it."
+    }
+  ]
+}

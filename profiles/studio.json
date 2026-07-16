@@ -84,6 +84,7 @@
   "packageAllowlist": {
     "characters": [
       "lisa",
+      "lisa-prime",
       "lorie",
       "marge",
       "ralph",
@@ -118,5 +119,61 @@
         "target": ".homer/generated/skills/**"
       }
     ]
+  },
+  "sanitization": {
+    "version": "1.0.0",
+    "targetRepository": "StewieTech/MaxCharacterWork",
+    "targetBaseBranch": "develop",
+    "allowedCharacterPackages": ["lisa", "lisa-prime", "lorie", "marge", "ralph", "ralph-prime"],
+    "allowedSkillPackages": ["lisa", "lisa-prime", "lorie", "marge-product-architect", "ralph", "ralph-prime"],
+    "nativeSkillNames": {
+      "lisa": "lisa",
+      "lisa-prime": "lisa-prime",
+      "lorie": "lorie",
+      "marge-product-architect": "marge-product-architect",
+      "ralph": "ralph",
+      "ralph-prime": "ralph-prime"
+    },
+    "targetVocabulary": {
+      "agent": "character",
+      "operation": "Odyssey Run",
+      "plan": "Odyssey Plan",
+      "product": "Studio"
+    },
+    "requiredSourceDocs": ["AGENTS.md", "agent.md"],
+    "validationCommands": ["npm run typecheck", "npm test", "npm run lint"],
+    "substitutions": {
+      "paths": {},
+      "repositories": { "StewieTech/Pariss": "StewieTech/MaxCharacterWork" },
+      "branches": { "developSIT": "develop" }
+    },
+    "capabilities": {
+      "allowed": ["filesystem.read", "repository.diff", "repository.inspect", "repository.plan", "tests.run"],
+      "humanGated": ["external.publish", "filesystem.write", "github.write", "production.deploy", "pull-request.merge"],
+      "denied": ["auth.policy.mutate", "billing.mutate", "cors.policy.mutate", "entitlement.policy.mutate", "exploit.write", "operational-abuse.perform", "production.mutate", "secret.export", "session.policy.mutate", "social.stealth-automate"]
+    },
+    "deniedPatterns": ["StewieTech/Pariss", "developSIT", "LolaLingo", "\\bsk-[A-Za-z0-9_-]{12,}\\b", "\\bghp_[A-Za-z0-9]{20,}\\b", "\\bAKIA[A-Z0-9]{16}\\b"],
+    "protectedPaths": [".agents/**", ".github/**", "AGENTS.md", "agent.md", "CONTEXT.md", "LANGUAGE.md", "launch-gates.md", "package.json", "package-lock.json", "api/**", "mobile/**", "scripts/**", "docs/**"],
+    "managedNativeSkillPaths": [".agents/skills/lisa", ".agents/skills/lisa-prime", ".agents/skills/lorie", ".agents/skills/marge-product-architect", ".agents/skills/ralph", ".agents/skills/ralph-prime"],
+    "localPrecedence": ["AGENTS.md", "agent.md", "CONTEXT.md", "docs/adr/**", "docs/ai-influencer-os/**"],
+    "requiredOverlays": [".homer/overlays/studio/policy.md"],
+    "minimumPackageVersions": {
+      "character:lisa": "1.1.0",
+      "character:lisa-prime": "1.1.0",
+      "character:lorie": "1.1.0",
+      "character:marge": "1.1.0",
+      "character:ralph": "1.1.0",
+      "character:ralph-prime": "1.1.0",
+      "skill:lisa": "1.1.0",
+      "skill:lisa-prime": "1.1.0",
+      "skill:lorie": "1.1.0",
+      "skill:marge-product-architect": "1.1.0",
+      "skill:ralph": "1.1.0",
+      "skill:ralph-prime": "1.1.0"
+    },
+    "failOnUnresolvedPlaceholder": true,
+    "failOnSourceSpecificLeakage": true,
+    "failOnUnmanagedConflict": true,
+    "evidenceOutputPath": ".homer/generated/install/sanitization-report.json"
   }
 }
