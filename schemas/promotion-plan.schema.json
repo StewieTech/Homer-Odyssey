@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/promotion-plan.schema.json",
+  "title": "Homer Odyssey Promotion Plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "kind",
+    "planId",
+    "accepted",
+    "acceptedPlanId",
+    "source",
+    "previousProvenance",
+    "target",
+    "packageFilters",
+    "dependencyClosure",
+    "changedSourceFiles",
+    "proposedPackageFiles",
+    "proposedOverlayFiles",
+    "proposedTargetVariables",
+    "capabilityChanges",
+    "dependencyChanges",
+    "referenceChanges",
+    "versionChanges",
+    "installerCatalogChanges",
+    "rejectedContent",
+    "requiredEvaluations",
+    "humanAcceptanceRequired",
+    "verification"
+  ],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "PromotionPlan" },
+    "planId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "accepted": { "type": "boolean" },
+    "acceptedPlanId": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit", "fingerprint", "paths"],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1 },
+        "commit": { "type": "string", "minLength": 1 },
+        "fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "paths": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "previousProvenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit", "fingerprint", "paths"],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1 },
+        "commit": { "type": "string", "minLength": 1 },
+        "fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "paths": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fingerprint", "paths"],
+      "properties": {
+        "fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "paths": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "packageFilters": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "dependencyClosure": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "changedSourceFiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "beforeHash", "afterHash", "classification", "reason"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "beforeHash": { "type": ["string", "null"] },
+          "afterHash": { "type": ["string", "null"] },
+          "classification": {
+            "enum": [
+              "portable-core",
+              "pariss-overlay",
+              "studio-overlay-candidate",
+              "target-variable",
+              "rejected-unsafe",
+              "rejected-nonportable",
+              "unchanged"
+            ]
+          },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "proposedPackageFiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sourcePaths", "sourceFingerprints", "classification", "decisionReason", "beforeHash", "content", "contentHash"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "sourcePaths": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1, "uniqueItems": true },
+          "sourceFingerprints": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "hash"],
+              "properties": {
+                "path": { "type": "string", "minLength": 1 },
+                "hash": { "type": ["string", "null"] }
+              }
+            }
+          },
+          "classification": {
+            "enum": [
+              "portable-core",
+              "pariss-overlay",
+              "studio-overlay-candidate",
+              "target-variable",
+              "rejected-unsafe",
+              "rejected-nonportable",
+              "unchanged"
+            ]
+          },
+          "decisionReason": { "type": "string", "minLength": 1 },
+          "beforeHash": { "type": ["string", "null"] },
+          "content": { "type": ["string", "null"] },
+          "contentHash": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "proposedOverlayFiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sourcePaths", "sourceFingerprints", "classification", "decisionReason", "beforeHash", "content", "contentHash"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "sourcePaths": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1, "uniqueItems": true },
+          "sourceFingerprints": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "hash"],
+              "properties": {
+                "path": { "type": "string", "minLength": 1 },
+                "hash": { "type": ["string", "null"] }
+              }
+            }
+          },
+          "classification": {
+            "enum": [
+              "portable-core",
+              "pariss-overlay",
+              "studio-overlay-candidate",
+              "target-variable",
+              "rejected-unsafe",
+              "rejected-nonportable",
+              "unchanged"
+            ]
+          },
+          "decisionReason": { "type": "string", "minLength": 1 },
+          "beforeHash": { "type": ["string", "null"] },
+          "content": { "type": ["string", "null"] },
+          "contentHash": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "proposedTargetVariables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "sourcePath", "description", "required"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" },
+          "sourcePath": { "type": "string", "minLength": 1 },
+          "description": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "capabilityChanges": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["added", "removed"],
+      "properties": {
+        "added": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "removed": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "dependencyChanges": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["added", "removed"],
+      "properties": {
+        "added": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "removed": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "referenceChanges": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["added", "removed"],
+      "properties": {
+        "added": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "removed": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "versionChanges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["package", "from", "to", "reason"],
+        "properties": {
+          "package": { "type": "string", "minLength": 1 },
+          "from": { "type": ["string", "null"] },
+          "to": { "type": "string", "minLength": 1 },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "installerCatalogChanges": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["added", "removed"],
+      "properties": {
+        "added": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "removed": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "rejectedContent": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "classification", "reason"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "classification": { "enum": ["rejected-unsafe", "rejected-nonportable"] },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "requiredEvaluations": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "humanAcceptanceRequired": { "type": "boolean" },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "verifiedFingerprint"],
+      "properties": {
+        "status": { "enum": ["pending", "passed", "failed"] },
+        "verifiedFingerprint": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

@@ -1,1 +1,13 @@
-{ "apiVersion": "homer.odyssey/v1", "kind": "PackageEval", "name": "marge-portability", "assertions": [{ "type": "contains", "value": "Product architecture routing" }, { "type": "notContains", "value": "StewieTech/Pariss" }, { "type": "notContains", "value": ".agents/" }] }
+{
+  "apiVersion": "homer.odyssey/v1",
+  "kind": "PackageEval",
+  "name": "marge-portability",
+  "assertions": [
+    { "type": "contains", "value": "Product architecture routing" },
+    { "type": "contains", "value": "goal harness" },
+    { "type": "contains", "value": "weighted dimension scores" },
+    { "type": "notContains", "value": "StewieTech/Pariss" },
+    { "type": "notContains", "value": "developSIT" },
+    { "type": "notContains", "value": ".agents/" }
+  ]
+}

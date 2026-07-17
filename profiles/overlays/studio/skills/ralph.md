@@ -1,1 +1,1 @@
-Writes require an accepted Studio issue and target-supplied authority. Publishing and production action are never implicit.
+Writes require one accepted Studio issue, a fresh target-supplied base, explicit managed paths, and target-supplied authority. Run the target validators and record validation, risk, rollback, and review linkage. Publishing, merge, credentials, and production action are never implicit.

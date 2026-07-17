@@ -1,12 +1,43 @@
 {
-  "apiVersion": "homer.odyssey/v1", "kind": "SkillManifest", "id": "lorie", "version": "1.0.0", "title": "Lorie Governance Review",
+  "apiVersion": "homer.odyssey/v1",
+  "kind": "SkillManifest",
+  "id": "lorie",
+  "version": "1.1.0",
+  "title": "Lorie Governance Review",
   "corePaths": ["core.md"],
-  "dependencies": { "packages": ["skill:lisa-prime", "skill:ralph-prime"], "helpers": ["helpers/contract.md"] },
-  "references": ["helpers/contract.md"], "commands": [], "workflows": [], "templates": [],
+  "dependencies": {
+    "packages": ["skill:lisa-prime", "skill:ralph-prime"],
+    "helpers": ["helpers/contract.md", "helpers/evidence-harness.md", "helpers/gate-review.md"]
+  },
+  "references": ["helpers/contract.md", "helpers/evidence-harness.md", "helpers/gate-review.md"],
+  "commands": [],
+  "workflows": [],
+  "templates": [],
   "capabilities": ["filesystem.read", "repository.inspect"],
-  "variables": [{ "name": "GOVERNANCE_BOUNDARY", "required": true, "description": "Explicit target-owned gate requiring review" }],
-  "outputs": ["governance-recommendation", "human-decision-packet"], "validation": ["package-eval"], "adapters": ["codex"], "evals": ["evals/core.json"],
-  "provenance": { "repository": "https://github.com/StewieTech/Pariss", "commit": "25f7fb367c8bdb375115726968adf1f131f04464", "paths": [".agents/skills/lorie/SKILL.md"] },
-  "compatibility": { "homer": ">=0.2.0", "targets": ["pariss", "restricted", "studio"] },
-  "upgrades": { "from": [], "instructions": "Review governance boundaries and final human authority before upgrading." }
+  "variables": [
+    { "name": "GOVERNANCE_BOUNDARY", "required": true, "description": "Explicit target-owned gate requiring review" },
+    { "name": "GOVERNANCE_EVIDENCE", "required": true, "description": "Target-owned evidence portfolio and current gate state" },
+    { "name": "HUMAN_DECISION_OWNER", "required": true, "description": "Target-owned final authority" }
+  ],
+  "outputs": ["governance-recommendation", "human-decision-packet", "gate-evidence-board", "durable-memory-proposal"],
+  "validation": ["package-eval", "target-governance-boundary", "evidence-currency"],
+  "adapters": ["codex"],
+  "evals": ["evals/core.json"],
+  "provenance": {
+    "repository": "https://github.com/StewieTech/Pariss",
+    "commit": "3585f89a16181161c1964f6174d94e57d021a268",
+    "paths": [
+      ".agents/skills/lorie/SKILL.md",
+      ".agents/skills/lorie/DECISION-PACKET.md",
+      ".agents/skills/lorie/HARNESS.md",
+      ".agents/skills/lorie/LAUNCH-GOVERNANCE.md",
+      ".agents/skills/lorie/TOOL-MATRIX.md",
+      ".agents/skills/lorie/WEEKLY-REVIEW.md"
+    ]
+  },
+  "compatibility": { "homer": ">=0.3.0", "targets": ["pariss", "restricted", "studio"] },
+  "upgrades": {
+    "from": ["1.0.0"],
+    "instructions": "Review governance boundaries, evidence currency, forbidden actions, and final human authority."
+  }
 }

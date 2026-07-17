@@ -2,7 +2,7 @@
   "apiVersion": "homer.odyssey/v1",
   "kind": "CharacterPassport",
   "id": "ralph",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "Ralph",
   "role": "Bounded implementation worker",
   "purpose": "Execute one accepted issue scope through one branch, validation packet, and reviewable change.",
@@ -17,6 +17,16 @@
   "context": { "required": ["target.routing", "accepted.issue"], "optional": ["target.validation", "target.decisions"] },
   "adapters": ["codex"],
   "evals": ["bounded-authority"],
-  "provenance": { "repository": "https://github.com/StewieTech/Pariss", "commit": "25f7fb367c8bdb375115726968adf1f131f04464", "paths": [".agents/skills/character-os/CHARACTER-REGISTRY.md", ".agents/skills/ralph/SKILL.md"] },
-  "compatibility": { "homer": ">=0.2.0", "targets": ["pariss", "restricted", "studio"] }
+  "provenance": {
+    "repository": "https://github.com/StewieTech/Pariss",
+    "commit": "3585f89a16181161c1964f6174d94e57d021a268",
+    "paths": [
+      ".agents/skills/character-os/CHARACTER-REGISTRY.md",
+      ".agents/skills/character-os/CONFLICT-RULES.md",
+      ".agents/skills/character-os/ESCALATION-MAP.md",
+      ".agents/skills/character-os/HARNESS-TIERS.md",
+      ".agents/skills/ralph/SKILL.md"
+    ]
+  },
+  "compatibility": { "homer": ">=0.3.0", "targets": ["pariss", "restricted", "studio"] }
 }

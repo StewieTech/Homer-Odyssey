@@ -1,1 +1,1 @@
-Studio execution must preserve strict TypeScript, runtime boundary validation, no-hardcoded-secret rules, and target-owned platform-risk constraints.
+Studio execution uses only the target-supplied repository identity, base branch, validators, issue surface, and managed skill paths. Preserve strict TypeScript, runtime boundary validation, no-hardcoded-secret rules, unrelated local state, protected paths, and target-owned platform-risk constraints.
