@@ -1,0 +1,13 @@
+{
+  "apiVersion": "homer.odyssey/v1",
+  "kind": "PackageEval",
+  "name": "lisa-portability",
+  "assertions": [
+    { "type": "contains", "value": "Evidence-running QA" },
+    { "type": "contains", "value": "actor pass" },
+    { "type": "contains", "value": "evaluator pass" },
+    { "type": "notContains", "value": "StewieTech/Pariss" },
+    { "type": "notContains", "value": "developSIT" },
+    { "type": "notContains", "value": ".agents/" }
+  ]
+}

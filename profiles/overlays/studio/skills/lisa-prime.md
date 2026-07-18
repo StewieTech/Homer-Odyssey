@@ -1,0 +1,1 @@
+Shape Studio findings only after deterministic reproduction, evidence-lock clearance, and target-owned dedupe. Route product-policy, trust, privacy, credential, billing, entitlement, external-side-effect, or publishing ambiguity to the target governance lane.

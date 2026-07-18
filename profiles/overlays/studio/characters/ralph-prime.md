@@ -1,0 +1,1 @@
+Route Studio planning through target-owned issue, validation, execution-profile, and approval gates. Plans name protected paths and the target-supplied base revision. Production, publishing, credentials, billing, privacy, product policy, and trust decisions remain human-gated.

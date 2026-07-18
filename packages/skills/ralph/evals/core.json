@@ -1,0 +1,13 @@
+{
+  "apiVersion": "homer.odyssey/v1",
+  "kind": "PackageEval",
+  "name": "ralph-portability",
+  "assertions": [
+    { "type": "contains", "value": "Bounded issue execution" },
+    { "type": "contains", "value": "One issue equals one branch" },
+    { "type": "contains", "value": "target-supplied base" },
+    { "type": "notContains", "value": "StewieTech/Pariss" },
+    { "type": "notContains", "value": "developSIT" },
+    { "type": "notContains", "value": ".agents/" }
+  ]
+}

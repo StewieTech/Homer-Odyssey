@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/install-lock.schema.json",
+  "title": "Homer target-aware install lock v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "generatedBy", "installerVersion", "profile", "target", "canonicalSource", "packages", "generatedFiles", "sanitizationReport", "rollback"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "HomerInstallLock" },
+    "generatedBy": { "const": "Homer Odyssey installer" },
+    "installerVersion": { "type": "string", "minLength": 1 },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "hash", "sanitizationVersion"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "sanitizationVersion": { "type": "string", "minLength": 1 }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "baseBranch", "inputHash"],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1 },
+        "baseBranch": { "type": "string", "minLength": 1 },
+        "inputHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "canonicalSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "hash"],
+      "properties": {
+        "repository": { "const": "https://github.com/StewieTech/Homer-Odyssey" },
+        "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "version", "hash"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "version": { "type": "string", "minLength": 1 },
+          "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    },
+    "generatedFiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "hash", "source"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "type": { "type": "string", "minLength": 1 },
+              "package": { "type": "string", "minLength": 1 },
+              "character": { "type": "string", "minLength": 1 },
+              "sourcePath": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "sanitizationReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "hash"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "rollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["previousLockHash", "previousLockBase64", "files"],
+      "properties": {
+        "previousLockHash": { "type": "string", "pattern": "^(?:|[a-f0-9]{64})$" },
+        "previousLockBase64": { "type": "string" },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "existed", "contentBase64"],
+            "properties": {
+              "path": { "type": "string", "minLength": 1 },
+              "existed": { "type": "boolean" },
+              "contentBase64": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

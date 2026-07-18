@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/odyssey-operation-request.schema.json",
+  "title": "Homer Odyssey Operation Request v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "operation", "targetRepository", "targetRef", "profile", "updateChannel", "requestedBy", "dryRun", "idempotencyKey", "packageFilters"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "OdysseyOperationRequest" },
+    "operation": { "enum": ["inspect", "check-drift", "plan", "create-update-branch", "apply-plan", "verify", "open-pr", "rollback-plan"] },
+    "targetRepository": { "type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
+    "targetRef": { "type": "string", "minLength": 1 },
+    "profile": { "type": "string", "pattern": "^[A-Za-z0-9._/-]+$" },
+    "updateChannel": { "enum": ["manual", "scheduled", "dependency-event", "stable-package"] },
+    "requestedBy": { "type": "string", "minLength": 1 },
+    "dryRun": { "type": "boolean" },
+    "idempotencyKey": { "type": "string", "minLength": 1 },
+    "packageFilters": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z0-9*._/-]+$" }, "uniqueItems": true },
+    "planPath": { "type": "string", "minLength": 1 },
+    "branchName": { "type": "string", "pattern": "^[A-Za-z0-9._/-]+$" },
+    "defaultBranch": { "type": "string", "pattern": "^[A-Za-z0-9._/-]+$" },
+    "privilegeIncreaseAcknowledged": { "type": "boolean" },
+    "pullRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title"],
+      "properties": { "title": { "type": "string", "minLength": 1 }, "base": { "type": "string", "minLength": 1 } }
+    }
+  }
+}

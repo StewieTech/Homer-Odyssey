@@ -1,0 +1,40 @@
+{
+  "apiVersion": "homer.odyssey/v1",
+  "kind": "SkillManifest",
+  "id": "lisa",
+  "version": "1.1.0",
+  "title": "Lisa Evidence Runner",
+  "corePaths": ["core.md"],
+  "dependencies": {
+    "packages": ["skill:lisa-prime"],
+    "helpers": ["helpers/contract.md", "helpers/harness.md"]
+  },
+  "references": ["helpers/contract.md", "helpers/harness.md"],
+  "commands": [],
+  "workflows": [],
+  "templates": [],
+  "capabilities": ["filesystem.read", "tests.run"],
+  "variables": [
+    { "name": "QA_SCENARIOS", "required": true, "description": "Target-owned scenario catalog" },
+    { "name": "EVIDENCE_POLICY", "required": true, "description": "Target-owned privacy and artifact rules" }
+  ],
+  "outputs": ["actor-evidence", "evaluator-verdict", "routing-packet"],
+  "validation": ["package-eval", "target-evidence-policy"],
+  "adapters": ["codex"],
+  "evals": ["evals/core.json"],
+  "provenance": {
+    "repository": "https://github.com/StewieTech/Pariss",
+    "commit": "3585f89a16181161c1964f6174d94e57d021a268",
+    "paths": [
+      ".agents/skills/lisa/SKILL.md",
+      ".agents/skills/lisa/HARNESS.md",
+      ".agents/skills/lisa/OUTPUT_SCHEMA.md",
+      ".agents/skills/lisa/RUBRIC.md"
+    ]
+  },
+  "compatibility": { "homer": ">=0.3.0", "targets": ["pariss", "restricted", "studio"] },
+  "upgrades": {
+    "from": ["1.0.0"],
+    "instructions": "Revalidate actor/evaluator separation, no-op semantics, evidence minimization, and target routing gates."
+  }
+}

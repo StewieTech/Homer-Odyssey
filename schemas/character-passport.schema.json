@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/character-passport.schema.json",
+  "title": "Homer Odyssey Character Passport v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "id", "version", "name", "role", "purpose", "traits", "corePaths", "capabilities", "dependencies", "permissions", "context", "adapters", "evals", "provenance", "compatibility"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "CharacterPassport" },
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?$" },
+    "name": { "type": "string", "minLength": 1 },
+    "role": { "type": "string", "minLength": 1 },
+    "purpose": { "type": "string", "minLength": 1 },
+    "traits": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "corePaths": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "capabilities": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["characters", "skills", "helpers"],
+      "properties": {
+        "characters": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "skills": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "helpers": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requested", "prohibited"],
+      "properties": {
+        "requested": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "prohibited": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "optional"],
+      "properties": {
+        "required": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "optional": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "adapters": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "evals": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit", "paths"],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1 },
+        "commit": { "type": "string", "minLength": 1 },
+        "paths": { "type": "array", "minItems": 1, "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+    "generatedBy": { "type": "string" },
+    "generatedSource": { "type": "object", "required": ["path", "hash"], "properties": { "path": { "type": "string" }, "hash": { "type": "string" } } },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["homer", "targets"],
+      "properties": {
+        "homer": { "type": "string", "minLength": 1 },
+        "targets": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    }
+  }
+}

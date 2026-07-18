@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/homer-lock.schema.json",
+  "title": "Homer Odyssey Lockfile v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "generatedBy", "planId", "source", "target", "profile", "transformerVersion", "overlayHash", "packages", "removedCapabilities", "deniedDependencies", "generatedFiles", "validation", "rollback"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "OdysseyLock" },
+    "generatedBy": { "const": "Homer Odyssey" },
+    "planId": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "source": { "type": "object", "required": ["commit", "hash"], "properties": { "commit": { "type": "string" }, "hash": { "type": "string" } } },
+    "target": { "type": "object", "required": ["inputCommit", "inputHash"], "properties": { "inputCommit": { "type": "string" }, "inputHash": { "type": "string" } } },
+    "profile": { "type": "object", "required": ["id", "version", "hash"], "properties": { "id": { "type": "string" }, "version": { "type": "string" }, "hash": { "type": "string" } } },
+    "transformerVersion": { "type": "string" },
+    "overlayHash": { "type": "string" },
+    "packages": { "type": "array", "items": { "type": "object", "required": ["id", "version", "hash"], "properties": { "id": { "type": "string" }, "version": { "type": "string" }, "hash": { "type": "string" } } } },
+    "removedCapabilities": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "deniedDependencies": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "generatedFiles": { "type": "array", "items": { "type": "object", "required": ["path", "hash", "sourcePath"], "properties": { "path": { "type": "string" }, "hash": { "type": "string" }, "sourcePath": { "type": "string" } } } },
+    "validation": { "type": "array", "items": { "type": "object", "required": ["name", "passed"], "properties": { "name": { "type": "string" }, "passed": { "type": "boolean" } } } },
+    "rollback": {
+      "type": "object",
+      "required": ["previousLockHash", "previousLockBase64", "instructions", "files"],
+      "properties": {
+        "previousLockHash": { "type": "string" },
+        "previousLockBase64": { "type": "string" },
+        "instructions": { "type": "string" },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "existed", "contentBase64"],
+            "properties": {
+              "path": { "type": "string" },
+              "existed": { "type": "boolean" },
+              "contentBase64": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

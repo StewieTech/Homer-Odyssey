@@ -1,0 +1,43 @@
+{
+  "apiVersion": "homer.odyssey/v1",
+  "kind": "SkillManifest",
+  "id": "marge-product-architect",
+  "version": "1.1.0",
+  "title": "Marge Product Architect",
+  "corePaths": ["core.md"],
+  "dependencies": {
+    "packages": ["skill:lisa-prime", "skill:lorie", "skill:ralph", "skill:ralph-prime"],
+    "helpers": ["helpers/contract.md", "helpers/goal-harness.md", "helpers/human-gates.md", "helpers/routing.md"]
+  },
+  "references": ["helpers/contract.md", "helpers/goal-harness.md", "helpers/human-gates.md", "helpers/routing.md"],
+  "commands": [], "workflows": [], "templates": [],
+  "capabilities": ["filesystem.read", "repository.inspect", "repository.plan"],
+  "variables": [
+    { "name": "GOAL_HARNESS", "required": true, "description": "Target-owned goal and scoring contract" },
+    { "name": "TARGET_ROUTING", "required": true, "description": "Target-owned planning, execution, and governance routes" },
+    { "name": "EXECUTION_POLICY", "required": true, "description": "Target-owned run modes, caps, profiles, and human gates" }
+  ],
+  "outputs": ["architecture-scorecard", "routing-packet", "human-decision-packet", "teacher-synthesis-candidates"],
+  "validation": ["package-eval", "target-goal-harness", "target-routing-policy"],
+  "adapters": ["codex"],
+  "evals": ["evals/core.json"],
+  "provenance": {
+    "repository": "https://github.com/StewieTech/Pariss",
+    "commit": "3585f89a16181161c1964f6174d94e57d021a268",
+    "paths": [
+      ".agents/skills/marge-product-architect/SKILL.md",
+      ".agents/skills/marge-product-architect/EXECUTION_ADAPTER.md",
+      ".agents/skills/marge-product-architect/HUMAN_GATES.md",
+      ".agents/skills/marge-product-architect/OUTPUT_SCHEMA.md",
+      ".agents/skills/marge-product-architect/PRD_OR_ISSUE_DECISION.md",
+      ".agents/skills/marge-product-architect/ROUTING.md",
+      ".agents/skills/marge-product-architect/RUN_MODES.md",
+      ".agents/skills/marge-product-architect/TEACHER_SYNTHESIS.md"
+    ]
+  },
+  "compatibility": { "homer": ">=0.3.0", "targets": ["pariss", "restricted", "studio"] },
+  "upgrades": {
+    "from": ["1.0.0"],
+    "instructions": "Review goal-harness scoring, routing vocabulary, execution caps, and human-gate compatibility."
+  }
+}

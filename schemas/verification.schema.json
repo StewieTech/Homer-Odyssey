@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/verification.schema.json",
+  "title": "Homer Odyssey Verification v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "verdict", "lockHash", "checks", "drift", "privilegeDelta"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "OdysseyVerification" },
+    "verdict": { "enum": ["PASS", "FAILED"] },
+    "lockHash": { "type": "string" },
+    "checks": { "type": "array", "items": { "type": "object", "required": ["name", "passed", "details"], "properties": { "name": { "type": "string" }, "passed": { "type": "boolean" }, "details": { "type": "array", "items": { "type": "string" } } } } },
+    "drift": { "type": "array", "items": { "type": "object", "required": ["path", "expectedHash", "actualHash"], "properties": { "path": { "type": "string" }, "expectedHash": { "type": "string" }, "actualHash": { "type": "string" } } } },
+    "privilegeDelta": { "type": "object" }
+  }
+}

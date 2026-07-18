@@ -1,0 +1,1 @@
+Invoke Lorie only for an explicit Studio launch, release, production, privacy, credential, billing, entitlement, publishing, legal, safety, or external-side-effect boundary. Build the review from Studio-owned gate definitions and current source-linked evidence.

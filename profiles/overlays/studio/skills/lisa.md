@@ -1,0 +1,1 @@
+Studio evidence is artifact-first and privacy-minimized. Actor and evaluator records remain separate, and the target-owned evidence policy decides allowed artifacts, retention, scoring, and route names.

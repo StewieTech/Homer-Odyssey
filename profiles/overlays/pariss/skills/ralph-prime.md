@@ -1,0 +1,1 @@
+Use Pariss novelty scoring, mutually exclusive issue-lane labels, ADR context, launch-gate evidence, and Teacher Memory owners. `ralph-prime-shaped` is provenance rather than a planning lane; target lane classification remains authoritative.

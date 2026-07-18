@@ -1,0 +1,44 @@
+{
+  "apiVersion": "homer.odyssey/v1",
+  "kind": "SkillManifest",
+  "id": "ralph",
+  "version": "1.1.0",
+  "title": "Ralph Bounded Execution",
+  "corePaths": ["core.md"],
+  "dependencies": {
+    "packages": [],
+    "helpers": ["helpers/contract.md", "helpers/execution-loop.md", "helpers/safety.md"]
+  },
+  "references": ["helpers/contract.md", "helpers/execution-loop.md", "helpers/safety.md"],
+  "commands": [],
+  "workflows": [],
+  "templates": [],
+  "capabilities": ["filesystem.read", "filesystem.write", "github.write", "tests.run"],
+  "variables": [
+    { "name": "ACCEPTED_ISSUE", "required": true, "description": "One decision-complete executable scope" },
+    { "name": "TARGET_REPOSITORY", "required": true, "description": "Target-owned repository identity" },
+    { "name": "TARGET_BASE_BRANCH", "required": true, "description": "Target-owned base branch" },
+    { "name": "ISSUE_TRACKER", "required": true, "description": "Target-owned work and review surface" },
+    { "name": "VALIDATION_COMMANDS", "required": true, "description": "Target-owned validation command set" }
+  ],
+  "outputs": ["reviewable-change", "validation-packet", "freshness-evidence", "rollback-plan"],
+  "validation": ["package-eval", "target-branch-freshness", "target-validation"],
+  "adapters": ["codex"],
+  "evals": ["evals/core.json"],
+  "provenance": {
+    "repository": "https://github.com/StewieTech/Pariss",
+    "commit": "3585f89a16181161c1964f6174d94e57d021a268",
+    "paths": [
+      ".agents/skills/ralph/SKILL.md",
+      ".agents/skills/ralph/GITHUB-ISSUES.md",
+      ".agents/skills/ralph/MODES.md",
+      ".agents/skills/ralph/QUEUE.md",
+      ".agents/skills/ralph/SANDBOXING.md"
+    ]
+  },
+  "compatibility": { "homer": ">=0.3.0", "targets": ["pariss", "studio"] },
+  "upgrades": {
+    "from": ["1.0.0"],
+    "instructions": "Confirm branch freshness, target-owned variables, validation, review linkage, and human-gate semantics."
+  }
+}

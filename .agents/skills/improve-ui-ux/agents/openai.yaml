@@ -1,0 +1,4 @@
+interface:
+  display_name: "Improve UI/UX"
+  short_description: "Review product experience and polish"
+  default_prompt: "Use $improve-ui-ux to review this screen flow and propose concrete UX improvements."

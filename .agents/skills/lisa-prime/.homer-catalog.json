@@ -1,0 +1,72 @@
+{
+  "apiVersion": "homer.odyssey/v1",
+  "generatedBy": "Homer Odyssey generic Codex catalog renderer",
+  "inputs": [
+    {
+      "hash": "93649791052bc50326a8b22c81e9cbfacd5449a24c99664af73f1a87f32bb0f1",
+      "path": "adapters/codex-catalog.js"
+    },
+    {
+      "hash": "8f7e53c3a4dcbd931f8547a265dd9b43ef32f49686b73f2aaec133e27dc42a9a",
+      "path": "profiles/overlays/generic/catalog.json#lisa-prime"
+    },
+    {
+      "hash": "a6e80f0d90943c7a5e19cb13b19af92026f32b8f14332727b6be535b7f569ec8",
+      "path": "adapters/templates/generic-codex-skill.md"
+    }
+  ],
+  "kind": "GenericCodexSkillOwnership",
+  "nativeName": "lisa-prime",
+  "ownership": "homer-generic-catalog",
+  "packages": [
+    {
+      "hash": "f2264a50da29572027cf2c95265688ee6b2a277bcdc029ae5a6fe0946ad3f828",
+      "key": "character:lisa",
+      "path": "packages/characters/lisa/passport.json",
+      "version": "1.1.0"
+    },
+    {
+      "hash": "3a5a3084da9e5143cd7b793661a31da54c760526089758895252675f302d7fc2",
+      "key": "character:lisa-prime",
+      "path": "packages/characters/lisa-prime/passport.json",
+      "version": "1.1.0"
+    },
+    {
+      "hash": "e1ba5c54609612514d598462893f518973f3bf22c5a8d50134ec261733b8fb39",
+      "key": "character:ralph",
+      "path": "packages/characters/ralph/passport.json",
+      "version": "1.1.0"
+    },
+    {
+      "hash": "71750ce380986b4ccfa1feee814fd4ab2ed823562c5f6b8b0ee8ab3e459b2356",
+      "key": "character:ralph-prime",
+      "path": "packages/characters/ralph-prime/passport.json",
+      "version": "1.1.0"
+    },
+    {
+      "hash": "fecbb1a6dc4b814159d0d01f6dd1fa6acfdce24cedcf6347defd828275f8d09d",
+      "key": "skill:lisa",
+      "path": "packages/skills/lisa/manifest.json",
+      "version": "1.1.0"
+    },
+    {
+      "hash": "e8608739da54da4c02f49c3239c21c1f4ca201e4fd0e4952c865f41c396d0ea4",
+      "key": "skill:lisa-prime",
+      "path": "packages/skills/lisa-prime/manifest.json",
+      "version": "1.1.0"
+    },
+    {
+      "hash": "3abcfa4fba15a1e17cc04513bc4af54ebd38b9cc9b29d2d95dfef3cd0ffc904f",
+      "key": "skill:ralph",
+      "path": "packages/skills/ralph/manifest.json",
+      "version": "1.1.0"
+    },
+    {
+      "hash": "0737e05fca91e2780e8ab0c12a34dc001ce13bd962ee8b70eb4324e6b163240f",
+      "key": "skill:ralph-prime",
+      "path": "packages/skills/ralph-prime/manifest.json",
+      "version": "1.1.0"
+    }
+  ],
+  "sourceHash": "a09d2728d07938c134a94631aa89769cf331f1488438d5a9a2f989c163a39d91"
+}

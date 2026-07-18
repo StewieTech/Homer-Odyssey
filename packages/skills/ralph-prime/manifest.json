@@ -1,0 +1,39 @@
+{
+  "apiVersion": "homer.odyssey/v1",
+  "kind": "SkillManifest",
+  "id": "ralph-prime",
+  "version": "1.1.0",
+  "title": "Ralph Prime Planning",
+  "corePaths": ["core.md"],
+  "dependencies": {
+    "packages": ["skill:ralph"],
+    "helpers": ["helpers/contract.md", "helpers/novelty-rubric.md", "helpers/routing.md"]
+  },
+  "references": ["helpers/contract.md", "helpers/novelty-rubric.md", "helpers/routing.md"],
+  "commands": [],
+  "workflows": [],
+  "templates": [],
+  "capabilities": ["filesystem.read", "repository.inspect", "repository.plan"],
+  "variables": [
+    { "name": "ISSUE_CONTEXT", "required": true, "description": "Bounded work request and evidence" },
+    { "name": "TARGET_ROUTING", "required": true, "description": "Target-owned execution, planning, and human lanes" }
+  ],
+  "outputs": ["decision-complete-plan", "execution-route", "human-decision-packet", "durable-learning-candidates"],
+  "validation": ["package-eval", "target-planning-gates"],
+  "adapters": ["codex"],
+  "evals": ["evals/core.json"],
+  "provenance": {
+    "repository": "https://github.com/StewieTech/Pariss",
+    "commit": "3585f89a16181161c1964f6174d94e57d021a268",
+    "paths": [
+      ".agents/skills/ralph-prime/SKILL.md",
+      ".agents/skills/ralph-prime/LANGUAGE.md",
+      ".agents/skills/ralph-prime/RUBRIC.md"
+    ]
+  },
+  "compatibility": { "homer": ">=0.3.0", "targets": ["pariss", "restricted", "studio"] },
+  "upgrades": {
+    "from": ["1.0.0"],
+    "instructions": "Re-score novelty, reversibility, planning evidence, recovery routing, and human-gate semantics."
+  }
+}

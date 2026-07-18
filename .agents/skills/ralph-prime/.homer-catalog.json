@@ -1,0 +1,48 @@
+{
+  "apiVersion": "homer.odyssey/v1",
+  "generatedBy": "Homer Odyssey generic Codex catalog renderer",
+  "inputs": [
+    {
+      "hash": "93649791052bc50326a8b22c81e9cbfacd5449a24c99664af73f1a87f32bb0f1",
+      "path": "adapters/codex-catalog.js"
+    },
+    {
+      "hash": "7d63e37e970eb3a5f4f4dbb03e0d30117cab37475223751cf1ed7415b2060c4e",
+      "path": "profiles/overlays/generic/catalog.json#ralph-prime"
+    },
+    {
+      "hash": "a6e80f0d90943c7a5e19cb13b19af92026f32b8f14332727b6be535b7f569ec8",
+      "path": "adapters/templates/generic-codex-skill.md"
+    }
+  ],
+  "kind": "GenericCodexSkillOwnership",
+  "nativeName": "ralph-prime",
+  "ownership": "homer-generic-catalog",
+  "packages": [
+    {
+      "hash": "e1ba5c54609612514d598462893f518973f3bf22c5a8d50134ec261733b8fb39",
+      "key": "character:ralph",
+      "path": "packages/characters/ralph/passport.json",
+      "version": "1.1.0"
+    },
+    {
+      "hash": "71750ce380986b4ccfa1feee814fd4ab2ed823562c5f6b8b0ee8ab3e459b2356",
+      "key": "character:ralph-prime",
+      "path": "packages/characters/ralph-prime/passport.json",
+      "version": "1.1.0"
+    },
+    {
+      "hash": "3abcfa4fba15a1e17cc04513bc4af54ebd38b9cc9b29d2d95dfef3cd0ffc904f",
+      "key": "skill:ralph",
+      "path": "packages/skills/ralph/manifest.json",
+      "version": "1.1.0"
+    },
+    {
+      "hash": "0737e05fca91e2780e8ab0c12a34dc001ce13bd962ee8b70eb4324e6b163240f",
+      "key": "skill:ralph-prime",
+      "path": "packages/skills/ralph-prime/manifest.json",
+      "version": "1.1.0"
+    }
+  ],
+  "sourceHash": "d46914253ca89e8bb80054ab14694eafc62712e869de1c1ce4cdfe089b970efb"
+}

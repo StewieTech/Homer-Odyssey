@@ -1,0 +1,177 @@
+name: Homer - Create Draft Update PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_repository: { description: "Allowlisted owner/repository", required: true, type: string }
+      target_ref: { description: "Protected base ref", required: true, type: string }
+      default_branch: { description: "Target default branch", required: true, type: string }
+      profile: { description: "Bundled profile or safe profile path", required: true, type: string }
+      package_filters: { description: "Comma-separated package filters", required: false, default: "", type: string }
+      privilege_increase_acknowledged: { description: "Explicitly acknowledge allowed privilege additions", required: true, default: false, type: boolean }
+  workflow_call:
+    inputs:
+      target_repository: { required: true, type: string }
+      target_ref: { required: true, type: string }
+      default_branch: { required: true, type: string }
+      profile: { required: true, type: string }
+      package_filters: { required: false, default: "", type: string }
+      privilege_increase_acknowledged: { required: true, type: boolean }
+    secrets:
+      HOMER_TARGET_TOKEN: { required: true }
+    outputs:
+      pull_request: { description: "Draft pull-request evidence", value: "${{ jobs.update.outputs.pull_request }}" }
+
+permissions:
+  contents: read
+
+concurrency:
+  group: homer-mutate-${{ inputs.target_repository }}-${{ inputs.profile }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    outputs:
+      pull_request: ${{ steps.pr.outputs.pull_request || steps.existing.outputs.pull_request }}
+    env:
+      GH_TOKEN: ${{ secrets.HOMER_TARGET_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { persist-credentials: false }
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.target_repository }}
+          ref: ${{ inputs.target_ref }}
+          path: target
+          token: ${{ secrets.HOMER_TARGET_TOKEN }}
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with: { node-version: "20", cache: npm }
+      - run: npm ci --ignore-scripts
+      - name: Validate bounded workflow inputs
+        env:
+          HOMER_ALLOWED_TARGETS: ${{ vars.HOMER_ALLOWED_TARGETS }}
+          HOMER_ALLOWED_PROFILES: ${{ vars.HOMER_ALLOWED_PROFILES }}
+          HOMER_ALLOWED_REFS: ${{ vars.HOMER_ALLOWED_REFS }}
+        run: >-
+          node scripts/operation-request.js
+          --operation plan
+          --target-repository "${{ inputs.target_repository }}"
+          --target-ref "${{ inputs.target_ref }}"
+          --profile "${{ inputs.profile }}"
+          --package-filters "${{ inputs.package_filters }}"
+          --update-channel manual
+          --requested-by "github:${{ github.actor }}"
+          --dry-run true
+          --idempotency-key "update-${{ github.run_id }}-${{ github.run_attempt }}"
+          > odyssey-request.json
+      - name: Produce exact accepted plan
+        run: >-
+          node bin/homer.js plan --source . --target target
+          --profile "${{ inputs.profile }}"
+          --package-filters "${{ inputs.package_filters }}"
+          --accept > odyssey-plan.json
+      - name: Validate freshness policy and derive branch
+        run: >-
+          node scripts/validate-update-plan.js odyssey-plan.json
+          "${{ inputs.target_ref }}" "${{ inputs.default_branch }}"
+          "${{ inputs.privilege_increase_acknowledged }}" > update-evidence.json
+      - id: branch
+        name: Read deterministic branch decision
+        shell: bash
+        run: |
+          echo "name=$(node -p "require('./update-evidence.json').branchName")" >> "$GITHUB_OUTPUT"
+          echo "has_changes=$(node -p "require('./update-evidence.json').hasChanges")" >> "$GITHUB_OUTPUT"
+      - id: existing
+        name: Suppress equivalent state or existing Homer update
+        shell: bash
+        env:
+          UPDATE_BRANCH: ${{ steps.branch.outputs.name }}
+        run: |
+          if test "${{ steps.branch.outputs.has_changes }}" != "true"; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo 'pull_request={"status":"no_drift","duplicateSuppressed":true}' >> "$GITHUB_OUTPUT"
+          elif git -C target ls-remote --exit-code --heads origin "$UPDATE_BRANCH" >/dev/null 2>&1; then
+            existing="$(gh pr list --repo "${{ inputs.target_repository }}" --head "$UPDATE_BRANCH" --state open --json number,url,isDraft --limit 1)"
+            test "$existing" != "[]" || { echo "Update branch exists without an open Homer pull request." >&2; exit 2; }
+            test "$(printf '%s' "$existing" | jq -r '.[0].isDraft')" = "true"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "pull_request=$(printf '%s' "$existing" | jq -c '.[0] + {duplicateSuppressed: true}')" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Create the fresh derived branch
+        if: steps.existing.outputs.skip != 'true'
+        working-directory: target
+        shell: bash
+        env:
+          UPDATE_BRANCH: ${{ steps.branch.outputs.name }}
+        run: |
+          test "$UPDATE_BRANCH" != "${{ inputs.target_ref }}"
+          test "$UPDATE_BRANCH" != "${{ inputs.default_branch }}"
+          git switch -c "$UPDATE_BRANCH"
+      - name: Apply exact accepted plan
+        if: steps.existing.outputs.skip != 'true'
+        run: >-
+          node bin/homer.js apply --source . --target target
+          --profile "${{ inputs.profile }}" --plan odyssey-plan.json
+          > odyssey-apply.json
+      - name: Verify generated target
+        if: steps.existing.outputs.skip != 'true'
+        run: >-
+          node bin/homer.js verify --source . --target target
+          --profile "${{ inputs.profile }}" > odyssey-verification.json
+      - name: Commit and push only the fresh update branch
+        if: steps.existing.outputs.skip != 'true'
+        working-directory: target
+        env:
+          UPDATE_BRANCH: ${{ steps.branch.outputs.name }}
+        run: |
+          git config user.name "Homer Odyssey"
+          git config user.email "homer-odyssey@users.noreply.github.com"
+          git add --all
+          git diff --cached --quiet && { echo "Plan claimed drift but produced no target changes." >&2; exit 2; }
+          git commit -m "chore: apply Homer Odyssey update"
+          git push --set-upstream origin "$UPDATE_BRANCH"
+      - name: Render safe pull-request evidence
+        if: steps.existing.outputs.skip != 'true'
+        run: >-
+          node scripts/render-update-pr-body.js odyssey-plan.json
+          odyssey-verification.json
+          "${{ inputs.target_repository }}@${{ inputs.target_ref }}"
+          > odyssey-pr-body.md
+      - id: pr
+        name: Open draft pull request only
+        if: steps.existing.outputs.skip != 'true'
+        env:
+          UPDATE_BRANCH: ${{ steps.branch.outputs.name }}
+        shell: bash
+        run: |
+          url="$(gh pr create --repo "${{ inputs.target_repository }}" --draft --base "${{ inputs.target_ref }}" --head "$UPDATE_BRANCH" --title "Homer Odyssey update" --body-file odyssey-pr-body.md)"
+          pull_request="$(gh pr view "$url" --repo "${{ inputs.target_repository }}" --json number,url,isDraft)"
+          test "$(printf '%s' "$pull_request" | jq -r '.isDraft')" = "true"
+          echo 'pull_request<<HOMER_EOF' >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$pull_request" >> "$GITHUB_OUTPUT"
+          echo 'HOMER_EOF' >> "$GITHUB_OUTPUT"
+      - name: Write durable update summary
+        if: always()
+        shell: bash
+        run: |
+          echo '## Homer draft update' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Target: `${{ inputs.target_repository }}@${{ inputs.target_ref }}`' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Derived branch: `${{ steps.branch.outputs.name }}`' >> "$GITHUB_STEP_SUMMARY"
+          echo '- Duplicate suppressed: `${{ steps.existing.outputs.skip || false }}`' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: homer-update-pr-${{ github.run_id }}
+          path: |
+            odyssey-request.json
+            odyssey-plan.json
+            update-evidence.json
+            odyssey-apply.json
+            odyssey-verification.json
+            odyssey-pr-body.md
+          retention-days: 14
+          if-no-files-found: warn

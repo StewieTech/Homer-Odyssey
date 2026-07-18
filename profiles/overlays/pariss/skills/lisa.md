@@ -1,0 +1,1 @@
+Use the Pariss persona scenarios and thin/thin-medium harness. Fill the Lisa Sequential output schema, keep raw learner content out of artifacts, and apply the issue-factory confidence, dedupe, and freshness gates before any candidate is shaped.

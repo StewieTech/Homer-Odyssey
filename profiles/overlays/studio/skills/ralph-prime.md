@@ -1,0 +1,1 @@
+Plans must name Studio validation commands, protected paths, target base revision, approval gates, execution profile, and rollback evidence. Missing product judgment and platform-risk decisions remain explicit human blockers.

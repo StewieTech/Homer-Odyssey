@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/homer.schema.json",
+  "title": "Homer Odyssey Target Declaration v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "sourceRoot", "targetRoot", "profile"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "OdysseyTarget" },
+    "sourceRoot": { "type": "string", "minLength": 1 },
+    "targetRoot": { "type": "string", "minLength": 1 },
+    "profile": { "type": "string", "minLength": 1 },
+    "sourceCommit": { "type": "string" },
+    "targetCommit": { "type": "string" }
+  }
+}

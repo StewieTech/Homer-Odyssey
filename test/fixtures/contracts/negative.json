@@ -1,0 +1,16 @@
+{
+  "character-passport": { "apiVersion": "homer.odyssey/v1", "kind": "CharacterPassport", "id": "INVALID ID" },
+  "skill-manifest": { "apiVersion": "homer.odyssey/v1", "kind": "SkillManifest", "id": "ralph", "version": "1.0.0", "corePaths": [] },
+  "target-profile": { "apiVersion": "homer.odyssey/v1", "kind": "TargetProfile", "id": "test", "version": "1.0.0", "paths": { "protected": [], "managed": [] } },
+  "homer": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyTarget", "sourceRoot": "./source", "profile": "studio" },
+  "homer-lock": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyLock", "source": {}, "target": {}, "profile": {} },
+  "dependency-graph": { "apiVersion": "homer.odyssey/v1", "kind": "DependencyGraph", "nodes": [{ "id": "x", "type": "unknown" }], "edges": [], "missing": [], "cycles": [], "conflicts": [] },
+  "privilege-delta": { "apiVersion": "homer.odyssey/v1", "kind": "PrivilegeDelta", "sourceCapabilities": [], "targetCapabilities": [], "added": [], "removed": [], "allowed": [], "humanGated": [], "denied": [], "unsafeIncrease": "no" },
+  "inventory": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyInventory", "inputs": {}, "entries": [{ "repository": "source", "path": "x" }], "dependencyGraph": {}, "summary": {}, "inventoryHash": "x" },
+  "odyssey-plan": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyPlan", "planId": "short", "accepted": true, "inputs": {}, "profile": {}, "inventoryHash": "x", "changes": [], "preservedPaths": [], "conflicts": [], "dependencyGraph": {}, "privilegeDelta": {}, "summary": {} }
+  ,"package-eval": { "apiVersion": "homer.odyssey/v1", "kind": "PackageEval", "name": "", "assertions": [] }
+  ,"verification": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyVerification", "verdict": "MAYBE", "lockHash": "x", "checks": [], "drift": [], "privilegeDelta": {} }
+  ,"odyssey-operation-request": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyOperationRequest", "operation": "merge", "targetRepository": "not-a-repo" }
+  ,"odyssey-run": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyRun", "runId": "short", "status": "complete" }
+  ,"odyssey-operation-response": { "apiVersion": "homer.odyssey/v1", "kind": "OdysseyOperationResponse", "run": {}, "packages": {}, "drift": { "status": "unknown", "summary": {} }, "privilegeDelta": {}, "policyDecision": { "verdict": "maybe", "reasons": [] }, "artifacts": [], "nextAllowedActions": [] }
+}
