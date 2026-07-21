@@ -13,6 +13,17 @@ on:
       target_ref: { required: true, type: string }
       profile: { required: true, type: string }
       package_filters: { required: false, default: "", type: string }
+      update_channel: { required: false, default: "manual", type: string }
+      requested_by: { required: false, default: "github-actions", type: string }
+      idempotency_key: { required: false, default: "", type: string }
+      orchestration_dedupe_key: { required: false, default: "", type: string }
+      orchestration_target_id: { required: false, default: "", type: string }
+      orchestration_trigger: { required: false, default: "", type: string }
+      orchestration_workflow_id: { required: false, default: "", type: string }
+      orchestration_source_commit: { required: false, default: "", type: string }
+      orchestration_package_versions: { required: false, default: "[]", type: string }
+      orchestration_target_commit: { required: false, default: "", type: string }
+      orchestration_target_lock_hash: { required: false, default: "", type: string }
     secrets:
       HOMER_TARGET_TOKEN: { required: false }
     outputs:
@@ -54,10 +65,10 @@ jobs:
           --target-ref "${{ inputs.target_ref }}"
           --profile "${{ inputs.profile }}"
           --package-filters "${{ inputs.package_filters }}"
-          --update-channel manual
-          --requested-by "github:${{ github.actor }}"
+          --update-channel "${{ inputs.update_channel || 'manual' }}"
+          --requested-by "${{ inputs.requested_by || format('github:{0}', github.actor) }}"
           --dry-run true
-          --idempotency-key "check-${{ github.run_id }}-${{ github.run_attempt }}"
+          --idempotency-key "${{ inputs.idempotency_key || format('check-{0}-{1}', github.run_id, github.run_attempt) }}"
           > odyssey-request.json
       - name: Check drift
         continue-on-error: true
@@ -71,6 +82,22 @@ jobs:
           echo 'response<<HOMER_EOF' >> "$GITHUB_OUTPUT"
           cat odyssey-response.json >> "$GITHUB_OUTPUT"
           echo 'HOMER_EOF' >> "$GITHUB_OUTPUT"
+      - name: Render safe orchestration status and notification
+        if: inputs.orchestration_dedupe_key != ''
+        run: >-
+          node scripts/render-drift-status.js
+          --request odyssey-request.json
+          --response odyssey-response.json
+          --target-id "${{ inputs.orchestration_target_id }}"
+          --trigger "${{ inputs.orchestration_trigger }}"
+          --workflow-id "${{ inputs.orchestration_workflow_id }}"
+          --source-commit "${{ inputs.orchestration_source_commit }}"
+          --package-versions '${{ inputs.orchestration_package_versions }}'
+          --target-commit "${{ inputs.orchestration_target_commit }}"
+          --target-lock-hash "${{ inputs.orchestration_target_lock_hash }}"
+          --dedupe-key "${{ inputs.orchestration_dedupe_key }}"
+          --status-output odyssey-drift-status.json
+          --notification-output odyssey-drift-notification.json
       - name: Write durable run summary
         if: always()
         shell: bash
@@ -84,5 +111,7 @@ jobs:
           path: |
             odyssey-request.json
             odyssey-response.json
+            odyssey-drift-status.json
+            odyssey-drift-notification.json
           retention-days: 14
           if-no-files-found: error

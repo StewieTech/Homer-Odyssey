@@ -40,4 +40,11 @@ Recurring integrations use three related contracts:
 - `OdysseyRun` owns exact inputs, source/target identities, lifecycle transitions, evidence references, and retry state.
 - `OdysseyOperationResponse` owns drift and package summaries, privilege and policy evidence, artifacts, failure taxonomy, and next allowed actions.
 
+Bounded drift automation adds two caller-side contracts without creating a second drift engine:
+
+- `OdysseyTargetRegistry` owns the explicit repository/profile/channel allowlist and execution bounds.
+- `OdysseyDriftOrchestration` owns trigger identity, stable package versions, per-target dedupe decisions, and the exact read-only requests that may be queued.
+
+The orchestration dedupe key binds repository, ref, profile, stable package versions, target lock hash, channel, and policy identity. Active equivalent runs, completed equivalent checks, open Homer update pull requests, and exact dismissed state suppress redundant work. A changed package version, lock hash, profile, or policy identity produces a new key instead of silently carrying a dismissal forward.
+
 The existing inventory, plan, lock, verification, package, profile, and privilege schemas remain the transformation truth. The recurring contracts reference their outputs rather than duplicating their calculations.

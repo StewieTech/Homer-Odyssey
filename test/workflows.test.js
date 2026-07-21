@@ -86,3 +86,30 @@ test('pull-request body presents semantic, privilege, and verification evidence 
   assert.match(body, /Draft only/);
   assert.doesNotMatch(body, /token|secret|password/i);
 });
+
+test('bounded drift orchestration exposes manual, stable-event, and weekly triggers with read-only permissions', () => {
+  const source = fs.readFileSync(path.join(workflowRoot, 'homer-drift-orchestration.yml'), 'utf8');
+  assert.match(source, /workflow_dispatch:/);
+  assert.match(source, /repository_dispatch:/);
+  assert.match(source, /homer-stable-package-promoted/);
+  assert.match(source, /schedule:/);
+  assert.match(source, /permissions:\s*\n\s*contents: read/);
+  assert.match(source, /max-parallel: 2/);
+  assert.match(source, /uses: \.\/\.github\/workflows\/homer-check-drift\.yml/);
+  assert.match(source, /fail-fast: false/);
+  assert.doesNotMatch(source, /contents: write|pull-requests: write|deployments: write/);
+  assert.doesNotMatch(source, /\b(?:apply-plan|create-update-branch|open-pr|merge|deploy)\b/i);
+});
+
+test('check-drift reusable workflow accepts caller-owned orchestration metadata without adding write capability', () => {
+  const source = fs.readFileSync(path.join(workflowRoot, 'homer-check-drift.yml'), 'utf8');
+  for (const input of ['update_channel', 'requested_by', 'idempotency_key', 'orchestration_dedupe_key', 'orchestration_target_lock_hash']) {
+    assert.match(source, new RegExp(`${input}:`));
+  }
+  assert.match(source, /--operation check-drift/);
+  assert.match(source, /--dry-run true/);
+  assert.match(source, /render-drift-status\.js/);
+  assert.match(source, /odyssey-drift-status\.json/);
+  assert.match(source, /odyssey-drift-notification\.json/);
+  assert.doesNotMatch(source, /contents: write|pull-requests: write|git push|gh pr create/);
+});

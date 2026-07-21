@@ -205,5 +205,49 @@
     "artifacts": [{ "type": "odyssey-diff", "name": "odyssey-diff.json", "content": {} }],
     "nextAllowedActions": [],
     "exitCode": 0
+  },
+  "odyssey-target-registry": {
+    "apiVersion": "homer.odyssey/v1",
+    "kind": "OdysseyTargetRegistry",
+    "limits": { "maxTargetsPerRun": 8, "concurrency": 2, "maxRetries": 2, "maxRateLimitWaitMs": 30000 },
+    "targets": [{
+      "id": "max-character-work-studio",
+      "repository": "StewieTech/MaxCharacterWork",
+      "targetRef": "develop",
+      "profile": "studio",
+      "channel": "stable",
+      "packageFilters": ["*"],
+      "compatiblePackages": ["character:*", "skill:*"],
+      "policyHash": "fixture-policy",
+      "enabled": true
+    }]
+  },
+  "odyssey-drift-orchestration": {
+    "apiVersion": "homer.odyssey/v1",
+    "kind": "OdysseyDriftOrchestration",
+    "orchestrationId": "aaaaaaaaaaaaaaaaaaaaaaaa",
+    "trigger": {
+      "type": "schedule",
+      "requestedBy": "fixture",
+      "workflowId": "workflow-1",
+      "sourceCommit": "source-sha",
+      "packageVersions": [{ "id": "skill:ralph", "version": "2.3.0" }]
+    },
+    "limits": { "maxTargetsPerRun": 8, "concurrency": 2, "maxRetries": 2, "maxRateLimitWaitMs": 30000 },
+    "summary": { "registered": 1, "eligible": 1, "queued": 0, "suppressed": 1, "dismissed": 0, "blocked": 0 },
+    "decisions": [{
+      "targetId": "max-character-work-studio",
+      "repository": "StewieTech/MaxCharacterWork",
+      "targetRef": "develop",
+      "profile": "studio",
+      "channel": "stable",
+      "targetCommit": "target-sha",
+      "targetLockHash": "target-lock-sha",
+      "status": "suppressed",
+      "dedupeKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "dedupeDecision": "completed_equivalent",
+      "evidenceLinks": [],
+      "request": null
+    }]
   }
 }
