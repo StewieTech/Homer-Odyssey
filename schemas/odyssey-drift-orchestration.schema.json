@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/StewieTech/Homer-Odyssey/schemas/odyssey-drift-orchestration.schema.json",
+  "title": "Homer Odyssey Drift Orchestration v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "orchestrationId", "trigger", "limits", "summary", "decisions"],
+  "properties": {
+    "apiVersion": { "const": "homer.odyssey/v1" },
+    "kind": { "const": "OdysseyDriftOrchestration" },
+    "orchestrationId": { "type": "string", "pattern": "^[a-f0-9]{24}$" },
+    "trigger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "requestedBy", "workflowId", "sourceCommit", "packageVersions"],
+      "properties": {
+        "type": { "enum": ["manual", "stable-package-event", "schedule"] },
+        "requestedBy": { "type": "string", "minLength": 1 },
+        "workflowId": { "type": "string", "minLength": 1 },
+        "sourceCommit": { "type": "string", "minLength": 1 },
+        "packageVersions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "version"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^(character|skill):[A-Za-z0-9._/-]+$" },
+              "version": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "limits": { "type": "object" },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registered", "eligible", "queued", "suppressed", "dismissed", "blocked"],
+      "properties": {
+        "registered": { "type": "integer" },
+        "eligible": { "type": "integer" },
+        "queued": { "type": "integer" },
+        "suppressed": { "type": "integer" },
+        "dismissed": { "type": "integer" },
+        "blocked": { "type": "integer" }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["targetId", "repository", "targetRef", "profile", "channel", "targetCommit", "targetLockHash", "status", "dedupeKey", "dedupeDecision", "evidenceLinks", "request"],
+        "properties": {
+          "targetId": { "type": "string", "minLength": 1 },
+          "repository": { "type": "string", "minLength": 1 },
+          "targetRef": { "type": "string", "minLength": 1 },
+          "profile": { "type": "string", "minLength": 1 },
+          "channel": { "enum": ["stable"] },
+          "targetCommit": { "type": ["string", "null"] },
+          "targetLockHash": { "type": ["string", "null"] },
+          "status": { "enum": ["queued", "suppressed", "dismissed", "blocked"] },
+          "dedupeKey": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "dedupeDecision": { "enum": ["queued", "active_equivalent", "completed_equivalent", "open_update", "dismissed", "incompatible", "bounded_limit", "missing_target_state"] },
+          "evidenceLinks": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+          "request": { "type": ["object", "null"] }
+        }
+      }
+    }
+  }
+}

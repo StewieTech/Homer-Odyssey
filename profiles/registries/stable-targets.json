@@ -1,0 +1,23 @@
+{
+  "apiVersion": "homer.odyssey/v1",
+  "kind": "OdysseyTargetRegistry",
+  "limits": {
+    "maxTargetsPerRun": 8,
+    "concurrency": 2,
+    "maxRetries": 2,
+    "maxRateLimitWaitMs": 30000
+  },
+  "targets": [
+    {
+      "id": "max-character-work-studio",
+      "repository": "StewieTech/MaxCharacterWork",
+      "targetRef": "develop",
+      "profile": "studio",
+      "channel": "stable",
+      "packageFilters": ["*"],
+      "compatiblePackages": ["character:*", "skill:*"],
+      "policyHash": "max-character-work-studio-stable-v1",
+      "enabled": true
+    }
+  ]
+}

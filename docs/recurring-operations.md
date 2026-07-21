@@ -40,7 +40,21 @@ The read workflows use read permissions and upload the request and response as s
 
 Package filters are validated, retained in plan identity, and used as auditable trigger scope. The resulting plan still resolves the profile's complete dependency-closed projection; a filter can narrow why a run starts, but cannot bypass required packages or policy checks.
 
-The workflows are disconnected by default: an operator must configure the allowlist and an appropriately scoped target token before enabling writes. Scheduled and dependency-event triggers are intentionally deferred until the reusable manual contract has proven stable.
+The workflows are disconnected by default: an operator must configure the allowlist and an appropriately scoped target token before enabling writes.
+
+## Bounded event and scheduled drift checks
+
+`.github/workflows/homer-drift-orchestration.yml` adds three read-only trigger surfaces over the same reusable `check-drift` workflow:
+
+- manual `workflow_dispatch` for a registered subset;
+- `homer-stable-package-promoted` repository events;
+- a weekly schedule.
+
+The canonical registry is `profiles/registries/stable-targets.json`. Trigger payloads cannot supply repositories or profiles; they may only narrow to registered target IDs. The workflow requires safe stable-package version metadata and a target-state projection through dispatch inputs, event payload fields, or the `HOMER_STABLE_PACKAGE_VERSIONS` and `HOMER_DRIFT_TARGET_STATE` repository variables. Missing target commit/lock evidence blocks that target honestly.
+
+`scripts/orchestrate-drift-checks.js` creates a bounded matrix and a safe `OdysseyDriftOrchestration` artifact. Dedupe covers exact source package versions, repository/profile/ref, target lock hash, channel, and policy identity, then checks active equivalents, completed equivalents, open Homer update pull requests, and exact dismissal state. A relevant input change creates a new key. Concurrency, target count, retry count, and rate-limit wait are registry-bounded; one failed target cannot cancel independent checks.
+
+Every queued entry is still an `OdysseyOperationRequest` with `operation: check-drift` and `dryRun: true`. The orchestration workflow has `contents: read`, calls no mutation operation, and cannot create branches, pull requests, merges, deployments, or default-branch writes. Result workflows retain exact drift/policy/privilege evidence while unsafe provider logs and non-GitHub evidence links are excluded from orchestration status metadata.
 
 ## Recurring promotion and installation
 

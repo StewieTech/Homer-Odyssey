@@ -1,0 +1,97 @@
+name: Homer - Bounded Drift Orchestration
+run-name: Homer drift ${{ github.event_name }} · ${{ github.run_id }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_versions_json:
+        description: Stable package versions as a JSON array
+        required: true
+        type: string
+      target_state_json:
+        description: Safe target state projection keyed by registered target id
+        required: true
+        type: string
+      target_ids_json:
+        description: Optional JSON array of registered target ids
+        required: false
+        default: "[]"
+        type: string
+  repository_dispatch:
+    types: [homer-stable-package-promoted]
+  schedule:
+    - cron: "17 13 * * 2"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: homer-drift-orchestration-${{ github.event.client_payload.idempotency_key || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      has_work: ${{ steps.plan.outputs.has_work }}
+      orchestration_id: ${{ steps.plan.outputs.orchestration_id }}
+    env:
+      HOMER_DRIFT_TRIGGER: ${{ github.event_name == 'repository_dispatch' && 'stable-package-event' || github.event_name == 'schedule' && 'schedule' || 'manual' }}
+      HOMER_DRIFT_REQUESTED_BY: github:${{ github.actor }}
+      HOMER_DRIFT_WORKFLOW_ID: ${{ github.workflow_ref }}#${{ github.run_id }}.${{ github.run_attempt }}
+      HOMER_DRIFT_SOURCE_COMMIT: ${{ github.sha }}
+      HOMER_DRIFT_PACKAGE_VERSIONS: ${{ inputs.package_versions_json || github.event.client_payload.package_versions_json || vars.HOMER_STABLE_PACKAGE_VERSIONS }}
+      HOMER_DRIFT_TARGET_STATE: ${{ inputs.target_state_json || github.event.client_payload.target_state_json || vars.HOMER_DRIFT_TARGET_STATE }}
+      HOMER_DRIFT_TARGET_IDS: ${{ inputs.target_ids_json || '[]' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - id: plan
+        name: Build bounded deduplicated check plan
+        run: >-
+          node scripts/orchestrate-drift-checks.js
+          --registry profiles/registries/stable-targets.json
+          --output odyssey-drift-orchestration.json
+          --matrix-output odyssey-drift-matrix.json
+      - name: Publish safe orchestration evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: homer-drift-plan-${{ steps.plan.outputs.orchestration_id }}
+          path: |
+            odyssey-drift-orchestration.json
+            odyssey-drift-matrix.json
+          retention-days: 14
+          if-no-files-found: error
+
+  check:
+    needs: prepare
+    if: needs.prepare.outputs.has_work == 'true'
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    uses: ./.github/workflows/homer-check-drift.yml
+    with:
+      target_repository: ${{ matrix.targetRepository }}
+      target_ref: ${{ matrix.targetRef }}
+      profile: ${{ matrix.profile }}
+      package_filters: ${{ join(matrix.packageFilters, ',') }}
+      update_channel: ${{ matrix.updateChannel }}
+      requested_by: ${{ matrix.requestedBy }}
+      idempotency_key: ${{ matrix.idempotencyKey }}
+      orchestration_dedupe_key: ${{ matrix.dedupeKey }}
+      orchestration_target_id: ${{ matrix.targetId }}
+      orchestration_trigger: ${{ matrix.triggerType }}
+      orchestration_workflow_id: ${{ matrix.workflowId }}
+      orchestration_source_commit: ${{ matrix.sourceCommit }}
+      orchestration_package_versions: ${{ toJson(matrix.sourcePackageVersions) }}
+      orchestration_target_commit: ${{ matrix.targetCommit }}
+      orchestration_target_lock_hash: ${{ matrix.targetLockHash }}
+    secrets: inherit

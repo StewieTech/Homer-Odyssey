@@ -134,7 +134,7 @@ Recurring callers use the same engine through a versioned operation envelope:
 homer run --request odyssey-operation-request.json --config ./homer.yaml
 ```
 
-The request supports `inspect`, `check-drift`, `plan`, `create-update-branch`, `apply-plan`, `verify`, `open-pr`, and `rollback-plan`. Repository mutations require a fresh accepted plan and a target/profile lease. Homer exposes draft-pull-request orchestration but intentionally exposes no merge operation. See [recurring operations and workflows](./docs/recurring-operations.md).
+The request supports `inspect`, `check-drift`, `plan`, `create-update-branch`, `apply-plan`, `verify`, `open-pr`, and `rollback-plan`. Repository mutations require a fresh accepted plan and a target/profile lease. Homer exposes draft-pull-request orchestration but intentionally exposes no merge operation. Registered stable-package events and weekly checks use the same read-only `check-drift` contract through a bounded dedupe layer; they never create an update branch or pull request automatically. See [recurring operations and workflows](./docs/recurring-operations.md).
 
 ## Notes
 
